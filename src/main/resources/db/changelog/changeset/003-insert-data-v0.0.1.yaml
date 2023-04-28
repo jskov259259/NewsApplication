@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005v0.0.1
+      author: Dzmitry Kalustau
+      changes:
+        - sql:
+            INSERT INTO news VALUES (1, '08:00:00', 'political news', 'Text');
+
+            INSERT INTO comments VALUES (1, '08:00:00', 'Text1', 'user1', 1);
+
+

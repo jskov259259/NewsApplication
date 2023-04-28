@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: postgres
+
+  - changeSet:
+      id: 002v0.0.1
+      author: Dzmitry Kalustau
+      comment: Create COMMENTS table
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: time
+                  type: time
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: text
+                  type: text
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: news_id
+                  type: int
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: news_id
+            baseTableName: comments
+            constraintName: fk_comments_news
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: news
