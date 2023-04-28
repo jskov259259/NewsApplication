@@ -13,7 +13,9 @@ import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsDao;
 import ru.clevertec.kalustau.service.NewsService;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,4 +36,44 @@ public class NewsServiceImpl implements NewsService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public NewsDto findById(Long id) {
+        News news = newsDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("No such news with id=" + id));
+        return newsMapper.newsToDto(news);
+    }
+
+    @Override
+    @Transactional
+    public NewsDto save(NewsDto newsDto) {
+        News news = newsMapper.dtoToNews(newsDto);
+        news.setTime(LocalTime.now());
+        News createdNews = newsDao.save(news);
+        return newsMapper.newsToDto(createdNews);
+    }
+
+    @Override
+    @Transactional
+    public NewsDto update(NewsDto newsDto) {
+        News currentNews = newsDao.findById(newsDto.getId())
+                .orElseThrow(() -> new RuntimeException("No such news with id=" + newsDto.getId()));
+
+        News newNews = newsMapper.dtoToNews(newsDto);
+        updateNews(currentNews, newNews);
+        News updatedNews = newsDao.save(currentNews);
+        return newsMapper.newsToDto(updatedNews);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long tagId) {
+        newsDao.deleteById(tagId);
+    }
+
+    private void updateNews(News currentNews, News newNews) {
+        currentNews.setTitle(newNews.getTitle());
+        currentNews.setText(newNews.getText());
+        if (Objects.nonNull(newNews.getComments()))
+            newNews.getComments().stream().forEach(currentNews::addComment);
+    }
 }

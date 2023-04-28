@@ -41,6 +41,7 @@ public class Comment implements BaseEntity<Long> {
     @Column(name = "username")
     private String userName;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name="news_id", nullable=false)
     @JsonIgnore

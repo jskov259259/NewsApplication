@@ -17,6 +17,7 @@ import lombok.ToString;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -39,7 +40,21 @@ public class News implements BaseEntity<Long> {
 
     private String text;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy="news")
     private List<Comment> comments;
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setNews(this);
+    }
+
+    public void removeComment(long commentId) {
+        Comment comment = this.comments.stream().filter(c -> c.getId() == commentId).findFirst().orElse(null);
+        if (Objects.nonNull(comment)) {
+            this.comments.remove(comment);
+            comment.setNews(null);
+        }
+    }
 
 }
