@@ -1,6 +1,10 @@
 package ru.clevertec.kalustau.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +27,14 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class NewsServiceImpl implements NewsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
+
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
 
     @Override
     public List<NewsDto> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+        logger.debug("findAll({}, {}, {})", pageNo, pageSize, sortBy);
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<News> pagedResult = newsRepository.findAll(paging);
 
@@ -38,6 +45,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsDto findById(Long id) {
+        logger.debug("findById({})", id);
         News news = newsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No such news with id=" + id));
         return newsMapper.newsToDto(news);
