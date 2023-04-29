@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
-import ru.clevertec.kalustau.repository.NewsDao;
+import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.NewsService;
 
 import java.time.LocalTime;
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class NewsServiceImpl implements NewsService {
 
-    private final NewsDao newsDao;
+    private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
 
     @Override
     public List<NewsDto> findAll(Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<News> pagedResult = newsDao.findAll(paging);
+        Page<News> pagedResult = newsRepository.findAll(paging);
 
         return pagedResult.getContent().stream()
                 .map(newsMapper::newsToDto)
@@ -38,7 +38,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsDto findById(Long id) {
-        News news = newsDao.findById(id)
+        News news = newsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No such news with id=" + id));
         return newsMapper.newsToDto(news);
     }
@@ -48,26 +48,26 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto save(NewsDto newsDto) {
         News news = newsMapper.dtoToNews(newsDto);
         news.setTime(LocalTime.now());
-        News createdNews = newsDao.save(news);
+        News createdNews = newsRepository.save(news);
         return newsMapper.newsToDto(createdNews);
     }
 
     @Override
     @Transactional
     public NewsDto update(NewsDto newsDto) {
-        News currentNews = newsDao.findById(newsDto.getId())
+        News currentNews = newsRepository.findById(newsDto.getId())
                 .orElseThrow(() -> new RuntimeException("No such news with id=" + newsDto.getId()));
 
         News newNews = newsMapper.dtoToNews(newsDto);
         updateNews(currentNews, newNews);
-        News updatedNews = newsDao.save(currentNews);
+        News updatedNews = newsRepository.save(currentNews);
         return newsMapper.newsToDto(updatedNews);
     }
 
     @Override
     @Transactional
     public void deleteById(Long tagId) {
-        newsDao.deleteById(tagId);
+        newsRepository.deleteById(tagId);
     }
 
     private void updateNews(News currentNews, News newNews) {
