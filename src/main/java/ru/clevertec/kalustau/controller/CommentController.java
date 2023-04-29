@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.controller.config;
+package ru.clevertec.kalustau.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,56 +13,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.kalustau.dto.NewsDto;
-import ru.clevertec.kalustau.service.NewsService;
+import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.service.CommentService;
 
 import java.util.List;
 
+import static ru.clevertec.kalustau.controller.config.Constants.COMMENTS_URL;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_NO;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_SIZE;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_SORT_BY;
-import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(NEWS_URL)
-public class NewsController {
+@RequestMapping(COMMENTS_URL)
+public class CommentController {
 
-    private final NewsService newsService;
+    private final CommentService commentsService;
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<NewsDto>> findAll(
+    public ResponseEntity<List<CommentDto>> findAll(
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<NewsDto> news = newsService.findAll(pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+        List<CommentDto> comments = commentsService.findAll(pageNo, pageSize, sortBy);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}", produces = "application/json")
-    public ResponseEntity<NewsDto> findById(@PathVariable Long id) {
-        NewsDto news = newsService.findById(id);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+    public ResponseEntity<CommentDto> findById(@PathVariable Long id) {
+        CommentDto comment = commentsService.findById(id);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<NewsDto> create(@RequestBody @Valid NewsDto newsDto) {
-        NewsDto createdNewsDto = newsService.save(newsDto);
-        return new ResponseEntity<>(createdNewsDto, HttpStatus.CREATED);
+    public ResponseEntity<CommentDto> create(@RequestBody @Valid CommentDto commentDto) {
+        CommentDto createdComment = commentsService.save(commentDto);
+        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}", consumes = {"application/json"}, produces = {"application/json"})
-    public ResponseEntity<NewsDto> update(@PathVariable Long id,
-                                                     @RequestBody @Valid NewsDto newsDto) {
-        newsDto.setId(id);
-        NewsDto news = newsService.update(newsDto);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+    public ResponseEntity<CommentDto> update(@PathVariable Long id,
+                                          @RequestBody @Valid CommentDto commentDto) {
+        commentDto.setId(id);
+        CommentDto comment = commentsService.update(commentDto);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        newsService.deleteById(id);
+        commentsService.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }
