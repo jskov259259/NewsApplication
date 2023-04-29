@@ -11,7 +11,9 @@ public interface CommentService {
 
     CommentDto findById(Long id);
 
-    CommentDto save(CommentDto commentDto);
+    List<CommentDto> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy);
+
+    CommentDto save(Long newsId, CommentDto commentDto);
 
     CommentDto update(CommentDto commentDto);
 

@@ -22,44 +22,56 @@ import static ru.clevertec.kalustau.controller.config.Constants.COMMENTS_URL;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_NO;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_SIZE;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_SORT_BY;
+import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(COMMENTS_URL)
 public class CommentController {
 
     private final CommentService commentsService;
 
-    @GetMapping(produces = "application/json")
+    @GetMapping(value=COMMENTS_URL, produces = "application/json")
     public ResponseEntity<List<CommentDto>> findAll(
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
+
         List<CommentDto> comments = commentsService.findAll(pageNo, pageSize, sortBy);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
-    @GetMapping(value="/{id}", produces = "application/json")
+    @GetMapping(value=COMMENTS_URL + "/{id}", produces = "application/json")
     public ResponseEntity<CommentDto> findById(@PathVariable Long id) {
         CommentDto comment = commentsService.findById(id);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<CommentDto> create(@RequestBody @Valid CommentDto commentDto) {
-        CommentDto createdComment = commentsService.save(commentDto);
+    @GetMapping(value = NEWS_URL + "/{newsId}/comments")
+    public ResponseEntity<List<CommentDto>> findAllCommentsByNewsId(
+            @PathVariable(value = "newsId") Long newsId,
+            @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
+
+        List<CommentDto> comments = commentsService.findAllByNewsId(newsId, pageNo, pageSize, sortBy);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
+    }
+
+    @PostMapping(value = NEWS_URL + "/{newsId}/comments", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<CommentDto> create(@PathVariable(value = "newsId") Long newsId,
+                                             @RequestBody @Valid CommentDto commentDto) {
+        CommentDto createdComment = commentsService.save(newsId, commentDto);
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}", consumes = {"application/json"}, produces = {"application/json"})
-    public ResponseEntity<CommentDto> update(@PathVariable Long id,
-                                          @RequestBody @Valid CommentDto commentDto) {
+    @PutMapping(value = COMMENTS_URL + "/{id}", consumes = {"application/json"}, produces = {"application/json"})
+    public ResponseEntity<CommentDto> update(@PathVariable Long id, @RequestBody @Valid CommentDto commentDto) {
         commentDto.setId(id);
         CommentDto comment = commentsService.update(commentDto);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}", produces = {"application/json"})
+    @DeleteMapping(value = COMMENTS_URL + "/{id}", produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentsService.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);

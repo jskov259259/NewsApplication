@@ -1,5 +1,6 @@
 package ru.clevertec.kalustau.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +43,7 @@ public class News implements BaseEntity<Long> {
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy="news")
+    @JsonIgnore
     private List<Comment> comments;
 
     public void addComment(Comment comment) {

@@ -71,9 +71,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private void updateNews(News currentNews, News newNews) {
-        currentNews.setTitle(newNews.getTitle());
-        currentNews.setText(newNews.getText());
-        if (Objects.nonNull(newNews.getComments()))
-            newNews.getComments().stream().forEach(currentNews::addComment);
+        if (Objects.nonNull(newNews.getTitle())) currentNews.setTitle(newNews.getTitle());
+        if (Objects.nonNull(newNews.getText())) currentNews.setText(newNews.getText());
     }
 }
