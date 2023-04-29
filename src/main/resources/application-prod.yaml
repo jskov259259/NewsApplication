@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/clevertec
     username: postgres
-    password: 5310Defender
+    password: admin
   jpa:
     properties:
       hibernate:
