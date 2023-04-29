@@ -16,6 +16,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(of = "title")
 @AllArgsConstructor
 @NoArgsConstructor

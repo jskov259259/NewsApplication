@@ -2,7 +2,6 @@ package ru.clevertec.kalustau.cache.comment;
 
 import ru.clevertec.kalustau.cache.Cache;
 import ru.clevertec.kalustau.model.Comment;
-import ru.clevertec.kalustau.model.News;
 
 import java.util.HashMap;
 import java.util.LinkedList;

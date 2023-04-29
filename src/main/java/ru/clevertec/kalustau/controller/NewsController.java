@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.kalustau.aop.annotation.Log;
 import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.service.NewsService;
 
@@ -26,6 +27,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(NEWS_URL)
+@Log
 public class NewsController {
 
     private final NewsService newsService;

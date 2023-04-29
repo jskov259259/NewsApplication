@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.kalustau.aop.annotation.Log;
 import ru.clevertec.kalustau.dto.CommentDto;
 import ru.clevertec.kalustau.service.CommentService;
 
@@ -26,6 +26,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 
 @RequiredArgsConstructor
 @RestController
+@Log
 public class CommentController {
 
     private final CommentService commentsService;

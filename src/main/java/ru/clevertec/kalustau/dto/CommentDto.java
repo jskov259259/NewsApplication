@@ -6,12 +6,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.clevertec.kalustau.model.News;
 
 import java.time.LocalTime;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode()
 @AllArgsConstructor
 @NoArgsConstructor

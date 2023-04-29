@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.aop;
+package ru.clevertec.kalustau.aop.cache;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
