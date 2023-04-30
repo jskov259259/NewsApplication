@@ -32,6 +32,7 @@ public class Comment implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     private LocalTime time;
@@ -42,6 +43,7 @@ public class Comment implements BaseEntity<Long> {
     private String userName;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name="news_id", nullable=false)
     @JsonIgnore

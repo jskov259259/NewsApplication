@@ -33,6 +33,7 @@ public class News implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     private LocalTime time;
@@ -44,6 +45,7 @@ public class News implements BaseEntity<Long> {
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy="news")
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
     private List<Comment> comments;
 
     public void addComment(Comment comment) {
