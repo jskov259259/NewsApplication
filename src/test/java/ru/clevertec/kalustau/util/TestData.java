@@ -1,14 +1,11 @@
 package ru.clevertec.kalustau.util;
 
+import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
 
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class TestData {
 
@@ -25,6 +22,21 @@ public class TestData {
 
     public static News getNews() {
         return getNewsList().get(1);
+    }
+
+    public static List<Comment> getCommentList() {
+        List<Comment> comments = new ArrayList<>();
+        comments.add(Comment.builder().id(1L).time(LocalTime.now()).text("Text1")
+                .userName("User1").build());
+        comments.add(Comment.builder().id(2L).time(LocalTime.now()).text("Text2")
+                .userName("User2").build());
+        comments.add(Comment.builder().id(3L).time(LocalTime.now()).text("Text3")
+                .userName("User3").build());
+        return comments;
+    }
+
+    public static Comment getComment() {
+        return getCommentList().get(1);
     }
 
 }
