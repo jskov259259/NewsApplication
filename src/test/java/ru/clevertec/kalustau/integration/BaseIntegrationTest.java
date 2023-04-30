@@ -1,6 +1,7 @@
 package ru.clevertec.kalustau.integration;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -15,7 +16,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @SpringBootTest
 public abstract class BaseIntegrationTest {
 
-    private static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:11.1");
+    private static final String DOCKER_IMAGE_NAME = "postgres:11.1";
+
+    private static PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DOCKER_IMAGE_NAME);
 
     @BeforeAll
     static void init() {
