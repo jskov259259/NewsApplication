@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    password: test
+    username: test
+  jpa:
+    show-sql: true
+  liquibase:
+    enabled: false
