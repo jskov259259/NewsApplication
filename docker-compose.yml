@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./
-    image: news-api:latest
+    image: medievil/docker-springboot-postgres:latest
     ports:
       - "8080:8080"
     environment:
