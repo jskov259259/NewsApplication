@@ -1,5 +1,6 @@
 package ru.clevertec.kalustau.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 @RestController
 @RequestMapping(NEWS_URL)
 @Log
+@Tag(name = "News", description = "News management APIs")
 public class NewsController {
 
     private final NewsService newsService;

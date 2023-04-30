@@ -1,5 +1,6 @@
 package ru.clevertec.kalustau.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 @RequiredArgsConstructor
 @RestController
 @Log
+@Tag(name = "Comment", description = "Comment management APIs")
 public class CommentController {
 
     private final CommentService commentsService;
