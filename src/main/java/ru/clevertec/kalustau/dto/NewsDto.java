@@ -31,5 +31,5 @@ public class NewsDto {
 
     String text;
 
-    List<Comment> comments = new ArrayList<>();
+    List<CommentDto> comments = new ArrayList<>();
 }

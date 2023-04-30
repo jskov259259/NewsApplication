@@ -28,5 +28,5 @@ public class CommentDto {
 
     private String userName;
 
-    private News news;
+    private NewsDto newsDto;
 }
