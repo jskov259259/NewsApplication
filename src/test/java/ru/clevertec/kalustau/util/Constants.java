@@ -1,7 +1,5 @@
 package ru.clevertec.kalustau.util;
 
-import java.math.BigDecimal;
-
 public class Constants {
 
     public static final Integer TEST_PAGE_NO = 0;
