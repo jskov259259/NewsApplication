@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.clevertec.kalustau.dto.NewsDto;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
@@ -91,10 +92,10 @@ class NewsServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
-    void checkFindByIdShouldThrowRuntimeException(Long id) {
-        doThrow(RuntimeException.class)
+    void checkFindByIdShouldThrowResourceNotFoundException(Long id) {
+        doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(RuntimeException.class, () -> newsService.findById(id));
+        assertThrows(ResourceNotFoundException.class, () -> newsService.findById(id));
         verify(newsRepository).findById(anyLong());
     }
 
@@ -143,10 +144,10 @@ class NewsServiceImplTest {
     }
 
     @Test
-    void checkUpdateShouldThrowRuntimeFoundException() {
-        doThrow(RuntimeException.class)
+    void checkUpdateShouldThrowResourceNotFoundException() {
+        doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(RuntimeException.class, () -> newsService.update(getNewsDto()));
+        assertThrows(ResourceNotFoundException.class, () -> newsService.update(getNewsDto()));
         verify(newsRepository).findById(anyLong());
     }
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.dto.NewsDto;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
@@ -47,7 +48,7 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto findById(Long id) {
         logger.debug("findById({})", id);
         News news = newsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No such news with id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
         return newsMapper.newsToDto(news);
     }
 
@@ -64,7 +65,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public NewsDto update(NewsDto newsDto) {
         News currentNews = newsRepository.findById(newsDto.getId())
-                .orElseThrow(() -> new RuntimeException("No such news with id=" + newsDto.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsDto.getId()));
 
         News newNews = newsMapper.dtoToNews(newsDto);
         updateNews(currentNews, newNews);

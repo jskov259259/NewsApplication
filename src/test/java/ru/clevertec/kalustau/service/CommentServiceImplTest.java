@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.repository.CommentRepository;
@@ -96,10 +97,10 @@ class CommentServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
-    void checkFindByIdShouldThrowRuntimeException(Long id) {
-        doThrow(RuntimeException.class)
+    void checkFindByIdShouldThrowResourceNotFoundException(Long id) {
+        doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(RuntimeException.class, () -> commentService.findById(id));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.findById(id));
         verify(commentRepository).findById(anyLong());
     }
 
@@ -128,10 +129,10 @@ class CommentServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
-    void checkFindAllByNewsIdShouldThrowRuntimeException() {
-        doThrow(RuntimeException.class)
+    void checkFindAllByNewsIdShouldThrowResourceNotFoundException() {
+        doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).existsById(anyLong());
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(ResourceNotFoundException.class, () ->
                 commentService.findAllByNewsId(TEST_ID, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY));
         verify(newsRepository).existsById(TEST_ID);
     }
@@ -184,10 +185,10 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void checkUpdateShouldThrowRuntimeFoundException() {
-        doThrow(RuntimeException.class)
+    void checkUpdateShouldThrowResourceNotFoundException() {
+        doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(RuntimeException.class, () -> commentService.update(getCommentDto()));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.update(getCommentDto()));
         verify(commentRepository).findById(anyLong());
     }
 

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
@@ -42,14 +43,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto findById(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No such comment with id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
         return commentMapper.commentToDto(comment);
     }
 
     @Override
     public List<CommentDto> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
         if (!newsRepository.existsById(newsId)) {
-            throw new RuntimeException("Not found News with id = " + newsId);
+            throw new ResourceNotFoundException("Not found News with id = " + newsId);
         }
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<Comment> pagedResult = commentRepository.findAllByNewsId(newsId, paging);
@@ -64,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto save(Long newsId, CommentDto commentDto) {
         Comment comment = commentMapper.dtoToComment(commentDto);
         News news = newsRepository.findById(newsId)
-                .orElseThrow(() -> new RuntimeException("No such news with id=" + newsId));
+                .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
         comment.setTime(LocalTime.now());
 
@@ -76,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentDto update(CommentDto commentDto) {
         Comment currentComment = commentRepository.findById(commentDto.getId())
-                .orElseThrow(() -> new RuntimeException("No such comment with id=" + commentDto.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + commentDto.getId()));
 
         Comment newComment = commentMapper.dtoToComment(commentDto);
         updateComment(currentComment, newComment);
