@@ -1,8 +1,10 @@
 package ru.clevertec.kalustau.cache;
 
+import ru.clevertec.kalustau.model.BaseEntity;
+
 import java.util.Optional;
 
-public interface Cache<E> {
+public interface Cache<E extends BaseEntity<Long>> {
 
     Optional<E> getById(Long id);
 
@@ -11,4 +13,6 @@ public interface Cache<E> {
     void update(E e);
 
     void delete(Long id);
+
+    void clear();
 }
