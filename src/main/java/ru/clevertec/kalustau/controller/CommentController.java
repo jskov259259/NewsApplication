@@ -1,9 +1,15 @@
 package ru.clevertec.kalustau.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.aop.annotation.Log;
 import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.service.CommentService;
 
 import java.util.List;
@@ -33,22 +40,32 @@ public class CommentController {
 
     private final CommentService commentsService;
 
-    @GetMapping(value=COMMENTS_URL, produces = "application/json")
+    @Operation(summary = "Retrieve all Comments", description = "Get list of all comments for all news")
+    @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
+                    mediaType = "application/json") })})
+    @GetMapping(value=COMMENTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CommentDto>> findAll(
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-
         List<CommentDto> comments = commentsService.findAll(pageNo, pageSize, sortBy);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
-    @GetMapping(value=COMMENTS_URL + "/{id}", produces = "application/json")
+    @Operation(summary = "Retrieve a comment by Id", description = "Get a Tutorial object by specifying its id")
+    @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
+            mediaType = "application/json") }),
+            @ApiResponse(description = "Such comment not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
+    @GetMapping(value=COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> findById(@PathVariable Long id) {
         CommentDto comment = commentsService.findById(id);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
+    @Operation(summary = "Retrieve all Comments by news ID", description = "Get list of all comments by news id")
+    @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
+            mediaType = "application/json") }),
+            @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value = NEWS_URL + "/{newsId}/comments")
     public ResponseEntity<List<CommentDto>> findAllCommentsByNewsId(
             @PathVariable(value = "newsId") Long newsId,
@@ -60,21 +77,32 @@ public class CommentController {
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
-    @PostMapping(value = NEWS_URL + "/{newsId}/comments", consumes = "application/json", produces = "application/json")
+    @Operation(summary = "Post new comment", description = "Save new comment for news")
+    @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = Comment.class),
+            mediaType = "application/json") })})
+    @PostMapping(value = NEWS_URL + "/{newsId}/comments", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> create(@PathVariable(value = "newsId") Long newsId,
                                              @RequestBody @Valid CommentDto commentDto) {
         CommentDto createdComment = commentsService.save(newsId, commentDto);
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = COMMENTS_URL + "/{id}", consumes = {"application/json"}, produces = {"application/json"})
+    @Operation(summary = "Update comment", description = "Update existed comment by id")
+    @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
+            mediaType = "application/json") }),
+            @ApiResponse(description = "Such comment not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
+    @PutMapping(value = COMMENTS_URL + "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> update(@PathVariable Long id, @RequestBody @Valid CommentDto commentDto) {
         commentDto.setId(id);
         CommentDto comment = commentsService.update(commentDto);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = COMMENTS_URL + "/{id}", produces = {"application/json"})
+    @Operation(summary = "Delete comment", description = "Delete comment by id")
+    @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") })})
+    @DeleteMapping(value = COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentsService.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);
