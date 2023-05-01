@@ -115,13 +115,25 @@ class CommentServiceImplTest {
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        List<CommentDto> commentDtoList = commentService.findAllByNewsId(TEST_ID, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<CommentDto> commentDtoList = commentService.findAllByNewsId(TEST_ID,
+                TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(newsRepository).existsById(TEST_ID);
-        verify(commentRepository).findAllByNewsId(TEST_ID, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        verify(commentRepository).findAllByNewsId(TEST_ID, PageRequest.of(TEST_PAGE_NO,
+                TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         verify(commentMapper, times(3)).commentToDto(any());
 
         assertThat(commentDtoList.get(0)).isEqualTo(commentDto);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
+    void checkFindAllByNewsIdShouldThrowRuntimeException() {
+        doThrow(RuntimeException.class)
+                .when(newsRepository).existsById(anyLong());
+        assertThrows(RuntimeException.class, () ->
+                commentService.findAllByNewsId(TEST_ID, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY));
+        verify(newsRepository).existsById(TEST_ID);
     }
 
     @Test
