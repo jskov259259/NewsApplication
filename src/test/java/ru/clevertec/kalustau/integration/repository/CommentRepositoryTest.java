@@ -33,8 +33,8 @@ class CommentRepositoryTest extends BaseIntegrationTest {
     void checkFindById() {
         Optional<Comment> commentData = commentRepository.findById(TEST_ID);
         assertThat(commentData.get().getId()).isEqualTo(TEST_ID);
-        assertThat(commentData.get().getText()).isEqualTo("Text1");
-        assertThat(commentData.get().getUserName()).isEqualTo("user1");
+        assertThat(commentData.get().getText()).isEqualTo("Nice news");
+        assertThat(commentData.get().getUserName()).isEqualTo("Cellular");
     }
 
     @Test

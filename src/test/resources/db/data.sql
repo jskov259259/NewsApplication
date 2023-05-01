@@ -10,13 +10,23 @@ INSERT INTO news VALUES (9, '21:18:02', 'US Army renames Fort Lee after 2 pionee
 INSERT INTO news VALUES (10, '17:31:16', 'Senate fails to advance Equal Rights Amendment resolution', 'CNN — The Senate on Thursday failed to advance a resolution to remove the deadline for ratification of the Equal Rights Amendment, a proposed amendment to the Constitution. The resolution failed 51-47. Although it had two Republican co-sponsors – Sens. Lisa Murkowski of Alaska and Susan Collins of Maine – most GOP senators opposed it. Republicans have generally argued they don’t think the amendment is needed because of the equal protections provided to women in the 14th Amendment. Supporters, however, say the ERA would ban discrimination on the basis of sex and guarantee equality for all under the Constitution');
 
 
-INSERT INTO comments VALUES (1, '11:19:06', 'Text1', 'user1', 1);
-INSERT INTO comments VALUES (2, '02:36:17', 'Text1', 'user2', 2);
-INSERT INTO comments VALUES (3, '02:30:16', 'Text1', 'user3', 3);
-INSERT INTO comments VALUES (4, '18:12:00', 'Text1', 'user4', 4);
-INSERT INTO comments VALUES (5, '01:30:45', 'Text1', 'user5', 2);
-INSERT INTO comments VALUES (6, '02:21:27', 'Text1', 'user6', 1);
-INSERT INTO comments VALUES (7, '04:33:08', 'Text1', 'user7', 5);
-INSERT INTO comments VALUES (8, '18:56:40', 'Text1', 'user8', 6);
-INSERT INTO comments VALUES (9, '15:40:15', 'Text1', 'user9', 8);
-INSERT INTO comments VALUES (10, '12:10:58', 'Text1', 'user10', 7);
+INSERT INTO comments VALUES (1, '11:19:06', 'Nice news', 'Cellular', 1);
+INSERT INTO comments VALUES (2, '02:36:17', 'Don’t even compare our situations with each other, my problems are a lot more complicated and awful.', 'Polli', 2);
+INSERT INTO comments VALUES (3, '02:30:16', 'I hate it when people use emoji’s instead of answers, emoji’s make any conversation unserious.', 'Norman', 3);
+INSERT INTO comments VALUES (4, '18:12:00', 'Zebra, why zebra has such a weird set of colors???', 'Curlicue', 4);
+INSERT INTO comments VALUES (5, '01:30:45', 'I value information which you provide and always find your tips super useful.', 'Ignavia',1 );
+INSERT INTO comments VALUES (6, '02:21:27', 'I have different priorities, it is okay you know, we don’t have to be all the same mate…', 'Sycosis', 3);
+INSERT INTO comments VALUES (7, '04:33:08', 'I told you that new economy crisis is near, did you hear what happened to Deutsche Bank? They fired thousands of workers, it is a sign.', 'Conundrum', 4);
+INSERT INTO comments VALUES (8, '18:56:40', 'I’m so happy, I took couple of painting lessons and I already feel like little Michelangelo.', 'Curlicue', 2);
+INSERT INTO comments VALUES (9, '15:40:15', 'Truth is out there, boy I loved to watch X-files in my childhood, one of my favorites.', 'Jentacular', 5);
+INSERT INTO comments VALUES (10, '18:05:43', 'Weeb memes are so funny, well done Japan, you are good at creating memes.', 'LimanYawp', 6);
+INSERT INTO comments VALUES (11, '12:10:58', 'I double-checked my papers and I have no idea what is wrong with it, can you specify your issue please?', 'Cellular', 7);
+INSERT INTO comments VALUES (12, '02:19:39', 'Handy blog, I always come here when I want to find some solution or guide.', 'Ignavia', 7);
+INSERT INTO comments VALUES (13, '03:44:50', 'Hey guys, so I just joined your thread and I want to say that YOU GUYS ARE AWESOME!!!', 'Scribable', 2);
+INSERT INTO comments VALUES (14, '20:04:05', 'Not now, in couple of years maybe, but not right now. Also let me know when release of your service is.', 'GantornGasbag', 6);
+INSERT INTO comments VALUES (15, '15:15:00', 'Fantastic mood I’m having right now, Friday + vacation and salary D', 'Sycosis', 8);
+INSERT INTO comments VALUES (16, '05:27:47', 'What about other issues? This one is resolved okay, but other issues are also crucial.', 'Conundrum', 2);
+INSERT INTO comments VALUES (17, '08:10:00', 'Doing my maximum, it will take some time, but I think I will be able to fix this issue, just give me some time.', 'Curlicue', 9);
+INSERT INTO comments VALUES (18, '12:10:58', 'What is wrong with people? They seem to be very aggressive and they can’t tolerate different point of view.', 'Jentacular', 9);
+INSERT INTO comments VALUES (19, '20:34:13', 'How about we wait for him first, listen to his advice and make decision afterwards? Sounds good?', 'MenexVerily', 1);
+INSERT INTO comments VALUES (20, '19:16:22', 'I just can''t stop playing puzzle games, no matter how many times I try it never gets boring.', 'Boleromorph511', 10);
