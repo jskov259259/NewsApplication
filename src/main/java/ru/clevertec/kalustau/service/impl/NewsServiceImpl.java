@@ -5,6 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = "newsCache")
 public class NewsServiceImpl implements NewsService {
 
     private static final Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
@@ -36,6 +42,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsMapper newsMapper;
 
     @Override
+    @Cacheable(cacheNames = "newsList")
     public List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         logger.debug("findAll({}, {}, {})", pageNo, pageSize, sortBy);
 
@@ -50,6 +57,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable(cacheNames = "news", key = "#id", unless = "#result == null")
     public NewsDto findById(Long id) {
         logger.debug("findById({})", id);
         News news = newsRepository.findById(id)
@@ -59,6 +67,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "newsList", allEntries = true)
     public NewsDto save(NewsDto newsDto) {
         News news = newsMapper.dtoToNews(newsDto);
         news.setTime(LocalTime.now());
@@ -68,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "newsList", allEntries = true)
     public NewsDto update(NewsDto newsDto) {
         News currentNews = newsRepository.findById(newsDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsDto.getId()));
@@ -80,6 +90,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @Caching(evict = { @CacheEvict(cacheNames = "news", key = "#id"),
+            @CacheEvict(cacheNames = "newsList", allEntries = true) })
     public void deleteById(Long tagId) {
         newsRepository.deleteById(tagId);
     }
