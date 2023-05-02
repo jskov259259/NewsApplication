@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.kalustau.aop.annotation.Log;
+import ru.clevertec.kalustau.aop.log.ControllerLog;
 import ru.clevertec.kalustau.dto.CommentDto;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.service.CommentService;
@@ -34,7 +34,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 
 @RequiredArgsConstructor
 @RestController
-@Log
+@ControllerLog
 @Tag(name = "Comment", description = "Comment management APIs")
 public class CommentController {
 

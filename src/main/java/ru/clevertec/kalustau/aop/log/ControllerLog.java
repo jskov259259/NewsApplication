@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.aop.annotation;
+package ru.clevertec.kalustau.aop.log;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Log {
+public @interface ControllerLog {
 
 }
