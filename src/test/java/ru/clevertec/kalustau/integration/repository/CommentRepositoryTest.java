@@ -29,7 +29,8 @@ class CommentRepositoryTest extends BaseIntegrationTest {
     @Test
     void checkFindAll() {
         Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
-        Page<Comment> pagedResult = commentRepository.findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        Page<Comment> pagedResult = commentRepository.findAll(specification,
+                PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         assertThat(pagedResult.getContent().size()).isEqualTo(10);
     }
 
@@ -39,6 +40,13 @@ class CommentRepositoryTest extends BaseIntegrationTest {
         assertThat(commentData.get().getId()).isEqualTo(TEST_ID);
         assertThat(commentData.get().getText()).isEqualTo("Nice news");
         assertThat(commentData.get().getUserName()).isEqualTo("Cellular");
+    }
+
+    @Test
+    void checkFindAllByNewsId() {
+        Page<Comment> pagedResult = commentRepository.findAllByNewsId(TEST_ID,
+                PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        assertThat(pagedResult.getContent().size()).isEqualTo(3);
     }
 
     @Test

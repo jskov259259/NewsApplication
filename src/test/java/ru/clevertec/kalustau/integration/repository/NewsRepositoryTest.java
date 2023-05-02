@@ -29,7 +29,8 @@ class NewsRepositoryTest extends BaseIntegrationTest {
     @Test
     void checkFindAll() {
         Specification<News> specification = getTestSpecification(TEST_SEARCH);
-        Page<News> pagedResult = newsRepository.findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        Page<News> pagedResult = newsRepository.findAll(specification,
+                PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         assertThat(pagedResult.getContent().size()).isEqualTo(10);
     }
 
