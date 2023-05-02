@@ -59,12 +59,12 @@ class CommentRepositoryTest extends BaseIntegrationTest {
 
     @Test
     void deleteById() {
-        Integer sizeBefore = commentRepository.findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)))
+        Integer sizeBefore = commentRepository.findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE+10, Sort.by(TEST_SORT_BY)))
                 .getContent().size();
 
-        commentRepository.deleteById(10L);
+        commentRepository.deleteById(20L);
 
-        Integer sizeAfter = commentRepository.findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)))
+        Integer sizeAfter = commentRepository.findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE+10, Sort.by(TEST_SORT_BY)))
                 .getContent().size();
         assertThat(sizeAfter).isLessThan(sizeBefore);
     }

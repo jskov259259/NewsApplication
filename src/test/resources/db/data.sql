@@ -29,4 +29,4 @@ INSERT INTO comments VALUES (16, '05:27:47', 'What about other issues? This one 
 INSERT INTO comments VALUES (17, '08:10:00', 'Doing my maximum, it will take some time, but I think I will be able to fix this issue, just give me some time.', 'Curlicue', 9);
 INSERT INTO comments VALUES (18, '12:10:58', 'What is wrong with people? They seem to be very aggressive and they can’t tolerate different point of view.', 'Jentacular', 9);
 INSERT INTO comments VALUES (19, '20:34:13', 'How about we wait for him first, listen to his advice and make decision afterwards? Sounds good?', 'MenexVerily', 1);
-INSERT INTO comments VALUES (20, '19:16:22', 'I just can''t stop playing puzzle games, no matter how many times I try it never gets boring.', 'Boleromorph511', 10);
+INSERT INTO comments VALUES (20, '19:16:22', 'I just can''t stop playing puzzle games, no matter how many times I try it never gets boring.', 'Boleromorph511', 9);
