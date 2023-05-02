@@ -27,7 +27,7 @@ class CommentRepositoryTest extends BaseIntegrationTest {
     private CommentRepository commentRepository;
 
     @Test
-    void checkFindAll() {
+    void checkFindAllShouldReturn10() {
         Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
         Page<Comment> pagedResult = commentRepository.findAll(specification,
                 PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
@@ -35,11 +35,17 @@ class CommentRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    void checkFindById() {
+    void checkFindByIdShouldReturnOptionalComment() {
         Optional<Comment> commentData = commentRepository.findById(TEST_ID);
         assertThat(commentData.get().getId()).isEqualTo(TEST_ID);
         assertThat(commentData.get().getText()).isEqualTo("Nice news");
         assertThat(commentData.get().getUserName()).isEqualTo("Cellular");
+    }
+
+    @Test
+    void checkFindByIdShouldReturnOptionalEmpty() {
+        Optional<Comment> commentData = commentRepository.findById(21L);
+        assertThat(commentData).isEmpty();
     }
 
     @Test

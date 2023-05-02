@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.integration.BaseIntegrationTest;
+import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 
@@ -27,7 +28,7 @@ class NewsRepositoryTest extends BaseIntegrationTest {
     private NewsRepository newsRepository;
 
     @Test
-    void checkFindAll() {
+    void checkFindAllShouldReturn10() {
         Specification<News> specification = getTestSpecification(TEST_SEARCH);
         Page<News> pagedResult = newsRepository.findAll(specification,
                 PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
@@ -35,10 +36,16 @@ class NewsRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    void checkFindById() {
+    void checkFindByIdShouldReturnOptionalNews() {
         Optional<News> newsData = newsRepository.findById(TEST_ID);
         assertThat(newsData.get().getId()).isEqualTo(TEST_ID);
         assertThat(newsData.get().getTitle()).isEqualTo("The secret of the presidential cue card");
+    }
+
+    @Test
+    void checkFindByIdShouldReturnOptionalEmpty() {
+        Optional<News> newsData = newsRepository.findById(11L);
+        assertThat(newsData).isEmpty();
     }
 
     @Test
