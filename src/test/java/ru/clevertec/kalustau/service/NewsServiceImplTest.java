@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
@@ -34,10 +35,12 @@ import static org.mockito.Mockito.verify;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
+import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getNewsDto;
 import static ru.clevertec.kalustau.util.TestData.getNewsList;
+import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
 
 @ExtendWith(MockitoExtension.class)
 class NewsServiceImplTest {
@@ -58,15 +61,16 @@ class NewsServiceImplTest {
     void checkFindAll() {
         News news = getNewsList().get(0);
         NewsDto newsDto = getNewsDto();
+        Specification<News> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getNewsList()))
-                .when(newsRepository).findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+                .when(newsRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         doReturn(newsDto)
                 .when(newsMapper).newsToDto(news);
 
-        List<NewsDto> newsDtoList = newsService.findAll(TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<NewsDto> newsDtoList = newsService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
-        verify(newsRepository).findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        verify(newsRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         verify(newsMapper, times(3)).newsToDto(any());
 
         assertThat(newsDtoList.get(0)).isEqualTo(newsDto);

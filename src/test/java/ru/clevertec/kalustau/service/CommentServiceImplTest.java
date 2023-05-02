@@ -12,10 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.dto.CommentDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
+import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.CommentServiceImpl;
@@ -35,11 +37,13 @@ import static org.mockito.Mockito.verify;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
+import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getComment;
 import static ru.clevertec.kalustau.util.TestData.getCommentDto;
 import static ru.clevertec.kalustau.util.TestData.getCommentList;
 import static ru.clevertec.kalustau.util.TestData.getNews;
+import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceImplTest {
@@ -63,15 +67,16 @@ class CommentServiceImplTest {
     void checkFindAll() {
         Comment comment = getCommentList().get(0);
         CommentDto commentDto = getCommentDto();
+        Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getCommentList()))
-                .when(commentRepository).findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+                .when(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        List<CommentDto> commentDtoList = commentService.findAll(TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<CommentDto> commentDtoList = commentService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
-        verify(commentRepository).findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        verify(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         verify(commentMapper, times(3)).commentToDto(any());
 
         assertThat(commentDtoList.get(0)).isEqualTo(commentDto);

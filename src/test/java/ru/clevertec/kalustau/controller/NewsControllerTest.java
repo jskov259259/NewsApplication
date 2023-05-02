@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
+import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getNewsDto;
 
@@ -58,9 +59,10 @@ class NewsControllerTest {
     @Test
     void checkFindAll() throws Exception {
         doReturn(Collections.singletonList(getNewsDto()))
-                .when(newsService).findAll(anyInt(), anyInt(), anyString());
+                .when(newsService).findAll(any(), anyInt(), anyInt(), anyString());
 
         LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("search", TEST_SEARCH);
         requestParams.add("pageNo", String.valueOf(TEST_PAGE_NO));
         requestParams.add("pageSize", String.valueOf(TEST_PAGE_SIZE));
         requestParams.add("sortBy", TEST_SORT_BY);
@@ -73,7 +75,7 @@ class NewsControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.is("Text1")));
 
-        Mockito.verify(newsService).findAll(TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        Mockito.verify(newsService).findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
     }
 
     @Test

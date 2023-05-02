@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface NewsService {
 
-    List<NewsDto> findAll(Integer pageNo, Integer pageSize, String sortBy);
+    List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
 
     NewsDto findById(Long id);
 

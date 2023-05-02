@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.dto.NewsDto;
@@ -17,6 +18,7 @@ import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.NewsService;
+import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -34,10 +36,13 @@ public class NewsServiceImpl implements NewsService {
     private final NewsMapper newsMapper;
 
     @Override
-    public List<NewsDto> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+    public List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         logger.debug("findAll({}, {}, {})", pageNo, pageSize, sortBy);
+
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<News> pagedResult = newsRepository.findAll(paging);
+        Specification<News> specification = new EntitySpecificationsBuilder<News>().getSpecification(search);
+
+        Page<News> pagedResult = newsRepository.findAll(specification, paging);
 
         return pagedResult.getContent().stream()
                 .map(newsMapper::newsToDto)
@@ -83,4 +88,5 @@ public class NewsServiceImpl implements NewsService {
         if (Objects.nonNull(newNews.getTitle())) currentNews.setTitle(newNews.getTitle());
         if (Objects.nonNull(newNews.getText())) currentNews.setText(newNews.getText());
     }
+
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.dto.CommentDto;
@@ -15,6 +16,7 @@ import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
+import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -31,9 +33,11 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
-    public List<CommentDto> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+    public List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<Comment> pagedResult = commentRepository.findAll(paging);
+        Specification<Comment> specification = new EntitySpecificationsBuilder<Comment>().getSpecification(search);
+
+        Page<Comment> pagedResult = commentRepository.findAll(specification, paging);
 
         return pagedResult.getContent().stream()
                 .map(commentMapper::commentToDto)
@@ -95,4 +99,5 @@ public class CommentServiceImpl implements CommentService {
         if (Objects.nonNull(newComment.getText())) currentComment.setText(newComment.getText());
         if (Objects.nonNull(newComment.getUserName())) currentComment.setUserName(newComment.getUserName());
     }
+
 }

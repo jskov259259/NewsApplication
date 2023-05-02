@@ -45,10 +45,11 @@ public class CommentController {
                     mediaType = "application/json") })})
     @GetMapping(value=COMMENTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CommentDto>> findAll(
+            @RequestParam(value = "search", required = false) String search,
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<CommentDto> comments = commentsService.findAll(pageNo, pageSize, sortBy);
+        List<CommentDto> comments = commentsService.findAll(search, pageNo, pageSize, sortBy);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 

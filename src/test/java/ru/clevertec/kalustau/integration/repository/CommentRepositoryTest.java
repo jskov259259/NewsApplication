@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.integration.BaseIntegrationTest;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.repository.CommentRepository;
@@ -15,8 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
+import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getComment;
+import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
 
 class CommentRepositoryTest extends BaseIntegrationTest {
 
@@ -25,7 +28,8 @@ class CommentRepositoryTest extends BaseIntegrationTest {
 
     @Test
     void checkFindAll() {
-        Page<Comment> pagedResult = commentRepository.findAll(PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
+        Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
+        Page<Comment> pagedResult = commentRepository.findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         assertThat(pagedResult.getContent().size()).isEqualTo(10);
     }
 

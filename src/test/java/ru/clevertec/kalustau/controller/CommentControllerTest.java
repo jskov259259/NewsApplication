@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
+import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getCommentDto;
 
@@ -58,9 +59,10 @@ class CommentControllerTest {
     @Test
     void checkFindAll() throws Exception {
         doReturn(Collections.singletonList(getCommentDto()))
-                .when(commentService).findAll(anyInt(), anyInt(), anyString());
+                .when(commentService).findAll(any(), anyInt(), anyInt(), anyString());
 
         LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("search", TEST_SEARCH);
         requestParams.add("pageNo", String.valueOf(TEST_PAGE_NO));
         requestParams.add("pageSize", String.valueOf(TEST_PAGE_SIZE));
         requestParams.add("sortBy", TEST_SORT_BY);
@@ -73,7 +75,7 @@ class CommentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userName", Matchers.is("User1")));
 
-        Mockito.verify(commentService).findAll(TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        Mockito.verify(commentService).findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
     }
 
     @Test

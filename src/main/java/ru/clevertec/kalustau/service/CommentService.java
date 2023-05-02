@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentDto> findAll(Integer pageNo, Integer pageSize, String sortBy);
+    List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
 
     CommentDto findById(Long id);
 
