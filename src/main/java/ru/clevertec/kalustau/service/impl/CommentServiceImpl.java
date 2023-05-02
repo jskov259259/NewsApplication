@@ -1,6 +1,10 @@
 package ru.clevertec.kalustau.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = "commentCache")
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -33,6 +38,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
+    @Cacheable
     public List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Specification<Comment> specification = new EntitySpecificationsBuilder<Comment>().getSpecification(search);
@@ -45,6 +51,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Cacheable(key = "#id")
     public CommentDto findById(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
@@ -66,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @CachePut(key = "#commentDto")
     public CommentDto save(Long newsId, CommentDto commentDto) {
         Comment comment = commentMapper.dtoToComment(commentDto);
         News news = newsRepository.findById(newsId)
@@ -79,6 +87,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @CachePut(key = "#commentDto.id")
     public CommentDto update(CommentDto commentDto) {
         Comment currentComment = commentRepository.findById(commentDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + commentDto.getId()));
@@ -91,6 +100,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @CacheEvict(key = "#id")
     public void deleteById(Long tagId) {
         commentRepository.deleteById(tagId);
     }

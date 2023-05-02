@@ -57,7 +57,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @Cacheable(cacheNames = "news", key = "#id", unless = "#result == null")
+    @Cacheable(key = "#id")
     public NewsDto findById(Long id) {
         logger.debug("findById({})", id);
         News news = newsRepository.findById(id)
@@ -67,7 +67,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "newsList", allEntries = true)
+    @CachePut(key = "#newsDto")
     public NewsDto save(NewsDto newsDto) {
         News news = newsMapper.dtoToNews(newsDto);
         news.setTime(LocalTime.now());
@@ -75,9 +75,10 @@ public class NewsServiceImpl implements NewsService {
         return newsMapper.newsToDto(createdNews);
     }
 
+
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "newsList", allEntries = true)
+    @CachePut(key = "#newsDto.id")
     public NewsDto update(NewsDto newsDto) {
         News currentNews = newsRepository.findById(newsDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsDto.getId()));
@@ -90,10 +91,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    @Caching(evict = { @CacheEvict(cacheNames = "news", key = "#id"),
-            @CacheEvict(cacheNames = "newsList", allEntries = true) })
-    public void deleteById(Long tagId) {
-        newsRepository.deleteById(tagId);
+    @CacheEvict(key = "#id")
+    public void deleteById(Long id) {
+        newsRepository.deleteById(id);
     }
 
     private void updateNews(News currentNews, News newNews) {
