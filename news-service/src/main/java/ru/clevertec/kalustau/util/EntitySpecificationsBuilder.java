@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.dto.criteria.SearchCriteria;
 import ru.clevertec.kalustau.dto.criteria.SearchOperation;
-import ru.clevertec.kalustau.model.News;
 
 import java.util.ArrayList;
 import java.util.List;

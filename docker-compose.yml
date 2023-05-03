@@ -1,14 +1,13 @@
 version: '3.3'
 
 services:
-  news-api:
-    build:
-      dockerfile: Dockerfile
-      context: ./
+  news-service:
+    build: ./news-service/.
     image: medievil/docker-springboot-postgres:latest
     ports:
       - "8080:8080"
     environment:
+      SPRING_PROFILE: redis
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: clevertec

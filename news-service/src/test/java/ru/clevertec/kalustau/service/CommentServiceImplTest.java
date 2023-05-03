@@ -17,7 +17,6 @@ import ru.clevertec.kalustau.dto.CommentDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
-import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.CommentServiceImpl;

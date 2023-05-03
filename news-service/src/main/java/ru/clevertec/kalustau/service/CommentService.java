@@ -1,7 +1,6 @@
 package ru.clevertec.kalustau.service;
 
 import ru.clevertec.kalustau.dto.CommentDto;
-import ru.clevertec.kalustau.dto.NewsDto;
 
 import java.util.List;
 
