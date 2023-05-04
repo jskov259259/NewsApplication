@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.aop.log.ControllerLog;
-import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.NewsService;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_NO;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_SIZE;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_SORT_BY;
 import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
+import static ru.clevertec.kalustau.util.JsonProtobufUtility.toJson;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,13 +46,13 @@ public class NewsController {
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<NewsDto>> findAll(
+    public ResponseEntity<String> findAll(
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
         List<NewsDto> news = newsService.findAll(search, pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
     @Operation(summary = "Retrieve a news by Id", description = "Get a News object by specifying its id")
@@ -59,18 +60,18 @@ public class NewsController {
             mediaType = "application/json") }),
             @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<NewsDto> findById(@PathVariable Long id) {
+    public ResponseEntity<String> findById(@PathVariable Long id) {
         NewsDto news = newsService.findById(id);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
     @Operation(summary = "Post new news", description = "Save new news in DB")
     @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<NewsDto> create(@RequestBody @Valid NewsDto newsDto) {
+    public ResponseEntity<String> create(@RequestBody @Valid NewsDto newsDto) {
         NewsDto createdNewsDto = newsService.save(newsDto);
-        return new ResponseEntity<>(createdNewsDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update news", description = "Update existed news by id")
@@ -78,11 +79,10 @@ public class NewsController {
             mediaType = "application/json") }),
             @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<NewsDto> update(@PathVariable Long id,
+    public ResponseEntity<String> update(@PathVariable Long id,
                                                      @RequestBody @Valid NewsDto newsDto) {
-        newsDto.setId(id);
-        NewsDto news = newsService.update(newsDto);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+        NewsDto news = newsService.update(id, newsDto);
+        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete news", description = "Delete news by id")

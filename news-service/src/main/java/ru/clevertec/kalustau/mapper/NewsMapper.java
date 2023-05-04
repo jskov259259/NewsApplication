@@ -1,13 +1,35 @@
 package ru.clevertec.kalustau.mapper;
 
-import org.mapstruct.Mapper;
-import ru.clevertec.kalustau.dto.NewsDto;
+import com.google.protobuf.Timestamp;
+import org.springframework.stereotype.Component;
 import ru.clevertec.kalustau.model.News;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
-@Mapper(componentModel = "spring")
-public interface NewsMapper {
+import java.time.Instant;
+import java.time.ZoneId;
 
-    News dtoToNews(NewsDto newsDto);
+@Component
+public class NewsMapper {
 
-    NewsDto newsToDto(News news);
+    public News dtoToNews(NewsDto newsDTO) {
+        return News.builder()
+                .id(newsDTO.getId())
+                .title(newsDTO.getTitle())
+                .text(newsDTO.getText())
+                .build();
+    }
+
+    public NewsDto newsToDto(News news) {
+        Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();
+        return NewsDto
+                .newBuilder()
+                .setId(news.getId())
+                .setTitle(news.getTitle())
+                .setText(news.getText())
+                .setTime(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .build();
+    }
 }

@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -34,7 +35,7 @@ public class Comment implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalTime time;
+    private LocalDateTime time;
 
     private String text;
 

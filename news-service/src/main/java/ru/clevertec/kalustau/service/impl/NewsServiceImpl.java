@@ -16,15 +16,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.NewsService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
-import java.time.LocalTime;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class NewsServiceImpl implements NewsService {
     @CachePut(key = "#newsDto")
     public NewsDto save(NewsDto newsDto) {
         News news = newsMapper.dtoToNews(newsDto);
-        news.setTime(LocalTime.now());
+        news.setTime(LocalDateTime.now());
         News createdNews = newsRepository.save(news);
         return newsMapper.newsToDto(createdNews);
     }
@@ -78,8 +79,8 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     @CachePut(key = "#newsDto.id")
-    public NewsDto update(NewsDto newsDto) {
-        News currentNews = newsRepository.findById(newsDto.getId())
+    public NewsDto update(Long id, NewsDto newsDto) {
+        News currentNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsDto.getId()));
 
         News newNews = newsMapper.dtoToNews(newsDto);

@@ -13,12 +13,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.NewsServiceImpl;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -137,7 +137,7 @@ class NewsServiceImplTest {
         doReturn(certificateDto)
                 .when(newsMapper).newsToDto(news);
 
-        NewsDto result = newsService.update(certificateDto);
+        NewsDto result = newsService.update(TEST_ID, certificateDto);
 
         verify(newsRepository).findById(anyLong());
         verify(newsRepository).save(news);
@@ -151,7 +151,7 @@ class NewsServiceImplTest {
     void checkUpdateShouldThrowResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> newsService.update(getNewsDto()));
+        assertThrows(ResourceNotFoundException.class, () -> newsService.update(TEST_ID, getNewsDto()));
         verify(newsRepository).findById(anyLong());
     }
 

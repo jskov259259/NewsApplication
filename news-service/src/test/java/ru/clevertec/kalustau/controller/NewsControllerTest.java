@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.clevertec.kalustau.service.NewsService;
 
 import java.util.Collections;
@@ -32,7 +34,10 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
+import static ru.clevertec.kalustau.util.TestData.fromJson;
+import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getNewsDto;
+import static ru.clevertec.kalustau.util.TestData.toJson;
 
 @ExtendWith(MockitoExtension.class)
 class NewsControllerTest {
@@ -71,7 +76,7 @@ class NewsControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.is("Text1")));
 
@@ -87,7 +92,7 @@ class NewsControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")));
 
@@ -101,11 +106,12 @@ class NewsControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getNewsDto()))
+                .content(new ObjectMapper().writeValueAsString(getNews()))
+//                        .content(toJson(getNewsDto()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")));
 
@@ -115,7 +121,7 @@ class NewsControllerTest {
     @Test
     void checkUpdate() throws Exception {
         doReturn(getNewsDto())
-                .when(newsService).update(any());
+                .when(newsService).update(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/news/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,11 +129,11 @@ class NewsControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")));
 
-        Mockito.verify(newsService).update(getNewsDto());
+        Mockito.verify(newsService).update(TEST_ID, getNewsDto());
     }
 
     @Test

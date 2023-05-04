@@ -71,7 +71,7 @@ class CommentControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userName", Matchers.is("User1")));
 
@@ -87,7 +87,7 @@ class CommentControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("userName", Matchers.is("User1")));
 
@@ -108,7 +108,7 @@ class CommentControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userName", Matchers.is("User1")));
 
@@ -126,7 +126,7 @@ class CommentControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("userName", Matchers.is("User1")));
 
@@ -136,7 +136,7 @@ class CommentControllerTest {
     @Test
     void checkUpdate() throws Exception {
         doReturn(getCommentDto())
-                .when(commentService).update(any());
+                .when(commentService).update(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/comments/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -144,11 +144,11 @@ class CommentControllerTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("userName", Matchers.is("User1")));
 
-        Mockito.verify(commentService).update(getCommentDto());
+        Mockito.verify(commentService).update(TEST_ID, getCommentDto());
     }
 
     @Test

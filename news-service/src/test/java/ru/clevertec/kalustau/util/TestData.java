@@ -1,14 +1,19 @@
 package ru.clevertec.kalustau.util;
 
 import com.google.common.base.Joiner;
+import com.google.protobuf.Message;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.Struct;
+import com.google.protobuf.util.JsonFormat;
 import org.springframework.data.jpa.domain.Specification;
-import ru.clevertec.kalustau.dto.CommentDto;
-import ru.clevertec.kalustau.dto.NewsDto;
 import ru.clevertec.kalustau.dto.criteria.SearchOperation;
 import ru.clevertec.kalustau.model.BaseEntity;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
+import ru.clevertec.kalustau.dto.Proto.CommentDto;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,7 +34,7 @@ public class TestData {
     }
 
     public static NewsDto getNewsDto() {
-        return NewsDto.builder().id(1L).title("Title1").text("Text1").build();
+        return NewsDto.newBuilder().setId(1L).setTitle("Title1").setText("Text1").build();
     }
 
     public static List<Comment> getCommentList() {
@@ -48,8 +53,8 @@ public class TestData {
     }
 
     public static CommentDto getCommentDto() {
-        return CommentDto.builder().id(1L).text("Text1")
-                .userName("User1").build();
+        return CommentDto.newBuilder().setId(1L).setText("Text1")
+                .setUserName("User1").build();
     }
 
     public static <E extends BaseEntity<Long>> Specification<E> getTestSpecification(String search) {
@@ -66,6 +71,16 @@ public class TestData {
                     matcher.group(5));
         }
         return builder.build();
+    }
+
+    public static Message fromJson(String json) throws IOException {
+        Message.Builder structBuilder = Struct.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(json, structBuilder);
+        return structBuilder.build();
+    }
+
+    public static String toJson(MessageOrBuilder messageOrBuilder) throws IOException {
+        return JsonFormat.printer().print(messageOrBuilder);
     }
 
 }

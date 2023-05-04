@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.clevertec.kalustau.dto.CommentDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
@@ -21,7 +20,9 @@ import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
+import ru.clevertec.kalustau.dto.Proto.CommentDto;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
@@ -79,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
-        comment.setTime(LocalTime.now());
+        comment.setTime(LocalDateTime.now());
 
         Comment createdComment = commentRepository.save(comment);
         return commentMapper.commentToDto(createdComment);
@@ -88,8 +89,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @CachePut(key = "#commentDto.id")
-    public CommentDto update(CommentDto commentDto) {
-        Comment currentComment = commentRepository.findById(commentDto.getId())
+    public CommentDto update(Long id, CommentDto commentDto) {
+        Comment currentComment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + commentDto.getId()));
 
         Comment newComment = commentMapper.dtoToComment(commentDto);

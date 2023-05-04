@@ -1,8 +1,7 @@
 package ru.clevertec.kalustau.service;
 
-import ru.clevertec.kalustau.dto.NewsDto;
-
 import java.util.List;
+import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
 public interface NewsService {
 
@@ -12,7 +11,7 @@ public interface NewsService {
 
     NewsDto save(NewsDto newsDto);
 
-    NewsDto update(NewsDto newsDto);
+    NewsDto update(Long id, NewsDto newsDto);
 
     void deleteById(Long id);
 }

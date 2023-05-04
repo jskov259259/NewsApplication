@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.dto.Proto.CommentDto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
@@ -178,7 +178,7 @@ class CommentServiceImplTest {
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        CommentDto result = commentService.update(commentDto);
+        CommentDto result = commentService.update(TEST_ID, commentDto);
 
         verify(commentRepository).findById(anyLong());
         verify(commentRepository).save(comment);
@@ -192,7 +192,7 @@ class CommentServiceImplTest {
     void checkUpdateShouldThrowResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> commentService.update(getCommentDto()));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDto()));
         verify(commentRepository).findById(anyLong());
     }
 

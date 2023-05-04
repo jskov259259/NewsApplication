@@ -1,6 +1,6 @@
 package ru.clevertec.kalustau.service;
 
-import ru.clevertec.kalustau.dto.CommentDto;
+import ru.clevertec.kalustau.dto.Proto.CommentDto;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface CommentService {
 
     CommentDto save(Long newsId, CommentDto commentDto);
 
-    CommentDto update(CommentDto commentDto);
+    CommentDto update(Long id, CommentDto commentDto);
 
     void deleteById(Long id);
 
