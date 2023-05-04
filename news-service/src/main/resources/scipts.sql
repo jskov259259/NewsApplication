@@ -241,3 +241,59 @@ INSERT INTO comments VALUES (197, '07:28:37', 'Anyone knows what kind of stats s
 INSERT INTO comments VALUES (198, '12:10:58', 'Oh dear, just look at all of this fake news around us. Where can I find reliable news source?', 'LimanYawp', 20);
 INSERT INTO comments VALUES (199, '05:39:26', 'Saw the other day vogue dance, it is weird, but I really loved moves in it.', 'Curlicue', 20);
 INSERT INTO comments VALUES (200, '12:10:58', 'Been there, tried that, no point, it won’t work no matter what, I’m tired....', 'Jentacular', 20);
+
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users
+(
+    id BIGSERIAL PRIMARY KEY,
+    userName VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL
+);
+
+
+DROP TABLE IF EXISTS roles;
+CREATE TABLE roles
+(
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+
+DROP TABLE IF EXISTS users_roles;
+CREATE TABLE users_roles
+(
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    UNIQUE (user_id, role_id)
+);
+
+
+INSERT INTO public.users(id, userName, password, email)
+VALUES (1, 'admin1', '123', 'mail1@mail.com');
+INSERT INTO public.users(id, userName, password, email)
+VALUES (2, 'admin2', '123', 'mail2@mail.com');
+INSERT INTO public.users(id, userName, password, email)
+VALUES (3, 'journalist1', '123', 'mail3@mail.com');
+INSERT INTO public.users(id, userName, password, email)
+VALUES (4, 'journalist2', '123', 'mail4@mail.com');
+INSERT INTO public.users(id, userName, password, email)
+VALUES (5, 'subscriber1', '123', 'mail5@mail.com');
+INSERT INTO public.users(id, userName, password, email)
+VALUES (6, 'subscriber2', '123', 'mail6@mail.com');
+
+
+INSERT INTO roles(id, name) VALUES (1, 'ROLE_ADMIN');
+INSERT INTO roles(id, name) VALUES (2, 'ROLE_JOURNALIST');
+INSERT INTO roles(id, name) VALUES (3, 'ROLE_SUBSCRIBER');
+
+
+INSERT INTO public.users_roles(user_id, role_id) VALUES (1, 1);
+INSERT INTO public.users_roles(user_id, role_id) VALUES (2, 1);
+INSERT INTO public.users_roles(user_id, role_id) VALUES (3, 2);
+INSERT INTO public.users_roles(user_id, role_id) VALUES (4, 2);
+INSERT INTO public.users_roles(user_id, role_id) VALUES (5, 3);
+INSERT INTO public.users_roles(user_id, role_id) VALUES (6, 3);
