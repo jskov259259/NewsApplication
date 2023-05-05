@@ -1,3 +1,0 @@
-cache:
-  algorithm: LRU
-  size: 3

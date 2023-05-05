@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.0.6'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     compileOnly 'org.projectlombok:lombok'
@@ -51,6 +53,12 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.22.0'
     protobuf 'com.google.protobuf:protobuf-javalite:3.22.0'
 
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2022.0.2'
+    }
 }
 
 tasks.named('test') {

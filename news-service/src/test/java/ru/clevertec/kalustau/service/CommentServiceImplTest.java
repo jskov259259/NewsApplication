@@ -14,7 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.dto.Proto.CommentDto;
-import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
+import ru.clevertec.kalustau.config.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.repository.CommentRepository;

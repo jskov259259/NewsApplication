@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: exception-starter
+  cloud:
+    config:
+      enabled: false

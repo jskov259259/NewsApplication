@@ -1,0 +1,10 @@
+#spring:
+#  cache:
+#    type: redis
+#  data:
+#    redis:
+#      connect-timeout: 2000
+#      host: ${SPRING_REDIS_HOST:localhost}
+#      port: ${SPRING_REDIS_PORT:6379}
+#      repositories:
+#        enabled: false
