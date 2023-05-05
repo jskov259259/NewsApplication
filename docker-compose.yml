@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: clevertec
       SPRING_REDIS_HOST: cache
       SPRING_REDIS_PORT: 6379
-      CLOUD_URI: http://config-server:8888
+      CLOUD_CONFIG_URI: http://config-server:8888
     networks:
       - postgres-network
     restart: unless-stopped
