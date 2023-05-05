@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;

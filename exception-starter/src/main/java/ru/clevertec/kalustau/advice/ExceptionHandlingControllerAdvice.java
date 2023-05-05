@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.exceptions.advice;
+package ru.clevertec.kalustau.advice;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

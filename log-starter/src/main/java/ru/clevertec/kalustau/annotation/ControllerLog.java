@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.aop.log;
+package ru.clevertec.kalustau.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.kalustau.aop.log.ControllerLog;
+import ru.clevertec.kalustau.annotation.ControllerLog;
 import ru.clevertec.kalustau.dto.Proto.CommentDto;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.service.CommentService;

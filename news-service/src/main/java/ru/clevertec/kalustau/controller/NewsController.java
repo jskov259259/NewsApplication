@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.kalustau.aop.log.ControllerLog;
+import ru.clevertec.kalustau.annotation.ControllerLog;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.NewsService;
 import ru.clevertec.kalustau.dto.Proto.NewsDto;

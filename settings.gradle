@@ -9,4 +9,6 @@
 
 rootProject.name = 'NewsApplication'
 include 'news-service'
+include 'exception-starter'
+include 'log-starter'
 

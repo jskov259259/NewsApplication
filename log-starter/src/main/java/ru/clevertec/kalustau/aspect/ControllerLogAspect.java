@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.aop.log;
+package ru.clevertec.kalustau.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,11 +17,11 @@ public class ControllerLogAspect {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerLogAspect.class);
 
-    @Pointcut("execution(@ru.clevertec.kalustau.aop.log.ControllerLog * *(..))")
+    @Pointcut("execution(@ru.clevertec.kalustau.annotation.ControllerLog * *(..))")
     private void annotatedMethods() {
     }
 
-    @Pointcut("within(@ru.clevertec.kalustau.aop.log.ControllerLog *)")
+    @Pointcut("within(@ru.clevertec.kalustau.annotation.ControllerLog *)")
     private void annotatedClass() {
     }
 
