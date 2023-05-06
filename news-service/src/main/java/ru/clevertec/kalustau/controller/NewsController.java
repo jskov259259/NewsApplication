@@ -68,7 +68,7 @@ public class NewsController {
     @Operation(summary = "Post new news", description = "Save new news in DB")
     @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = "application/x-protobuf", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody @Valid NewsDto newsDto) {
         NewsDto createdNewsDto = newsService.save(newsDto);
         return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);

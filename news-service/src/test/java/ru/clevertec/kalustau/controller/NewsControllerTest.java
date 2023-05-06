@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.clevertec.kalustau.service.NewsService;
 
 import java.util.Collections;
@@ -34,12 +33,10 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
-import static ru.clevertec.kalustau.util.TestData.fromJson;
-import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getNewsDto;
-import static ru.clevertec.kalustau.util.TestData.toJson;
 
 @ExtendWith(MockitoExtension.class)
+@Profile("test")
 class NewsControllerTest {
 
     @InjectMocks
@@ -106,7 +103,7 @@ class NewsControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getNews()))
+                .content(new ObjectMapper().writeValueAsString(getNewsDto()))
 //                        .content(toJson(getNewsDto()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())

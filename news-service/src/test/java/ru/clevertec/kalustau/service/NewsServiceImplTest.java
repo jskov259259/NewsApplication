@@ -18,6 +18,7 @@ import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.NewsServiceImpl;
 import ru.clevertec.kalustau.dto.Proto.NewsDto;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;

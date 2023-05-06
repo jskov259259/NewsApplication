@@ -13,4 +13,5 @@ include 'exception-starter'
 include 'log-starter'
 include 'config-server'
 include 'eureka-server'
+include 'user-service'
 
