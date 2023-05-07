@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+/**
+ * LFU cache implementation
+ * @author Dzmitry Kalustau
+ */
 public abstract class CacheLFU<E extends BaseEntity<Long>> implements Cache<E> {
 
     private Map<Long, E> valueMap = new HashMap<>();

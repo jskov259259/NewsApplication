@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * LRU cache implementation
+ * @author Dzmitry Kalustau
+ */
 public abstract class CacheLRU<E extends BaseEntity<Long>> extends LinkedHashMap<Long, E> implements Cache<E> {
 
     private int maxSize;

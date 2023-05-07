@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+/**
+ * Aspect describing logging points in controllers
+ * @author Dzmitry Kalustau
+ */
 @Aspect
 @Component
 public class ControllerLogAspect {
@@ -25,6 +29,11 @@ public class ControllerLogAspect {
     private void annotatedClass() {
     }
 
+    /**
+     * Advice at the annotation level intercepting control for logging
+     * @param joinPoint The join point that represents the method execution.
+     * @throws Throwable If an exception occurs during method execution.
+     */
     @Around("annotatedMethods() || annotatedClass()")
     public void writeLog(ProceedingJoinPoint joinPoint) throws Throwable {
         String startMessage = createFirstMessage(joinPoint);

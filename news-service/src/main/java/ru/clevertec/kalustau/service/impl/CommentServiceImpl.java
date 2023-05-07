@@ -20,13 +20,17 @@ import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.CommentDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing comments.
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -37,6 +41,9 @@ public class CommentServiceImpl implements CommentService {
     private final NewsRepository newsRepository;
     private final CommentMapper commentMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Cacheable
     public List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
@@ -50,6 +57,9 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Cacheable(key = "#id")
     public CommentDto findById(Long id) {
@@ -58,6 +68,9 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToDto(comment);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<CommentDto> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
         if (!newsRepository.existsById(newsId)) {
@@ -71,6 +84,9 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CachePut(key = "#commentDto")
@@ -85,6 +101,9 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToDto(createdComment);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CachePut(key = "#commentDto.id")
@@ -98,6 +117,9 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToDto(updatedComment);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CacheEvict(key = "#id")
