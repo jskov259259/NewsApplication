@@ -35,7 +35,7 @@ public class ControllerLogAspect {
      * @throws Throwable If an exception occurs during method execution.
      */
     @Around("annotatedMethods() || annotatedClass()")
-    public void writeLog(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object writeLog(ProceedingJoinPoint joinPoint) throws Throwable {
         String startMessage = createFirstMessage(joinPoint);
         log.info(startMessage);
 
@@ -43,6 +43,7 @@ public class ControllerLogAspect {
 
         String finalMessage = createFinalMessage(methodResult);
         log.info(finalMessage);
+        return methodResult;
     }
 
     private String createFirstMessage(ProceedingJoinPoint joinPoint) {

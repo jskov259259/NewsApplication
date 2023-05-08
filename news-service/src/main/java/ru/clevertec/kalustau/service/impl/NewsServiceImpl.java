@@ -1,8 +1,5 @@
 package ru.clevertec.kalustau.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheConfig;
@@ -40,8 +37,6 @@ import java.util.stream.Collectors;
 @CacheConfig(cacheNames = "newsCache")
 public class NewsServiceImpl implements NewsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
-
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
 
@@ -51,8 +46,6 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Cacheable(cacheNames = "newsList")
     public List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
-        logger.debug("findAll({}, {}, {})", pageNo, pageSize, sortBy);
-
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Specification<News> specification = new EntitySpecificationsBuilder<News>().getSpecification(search);
 
@@ -69,7 +62,6 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Cacheable(key = "#id")
     public NewsDto findById(Long id) {
-        logger.debug("findById({})", id);
         News news = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
         return newsMapper.newsToDto(news);

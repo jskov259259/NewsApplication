@@ -19,9 +19,9 @@ import java.util.Arrays;
 @Component
 public class ApplicationLogAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(ControllerLogAspect.class);
+    private static final Logger log = LoggerFactory.getLogger(ApplicationLogAspect.class);
 
-    @Pointcut("within(@org.springframework.stereotype.Repository *)")
+    @Pointcut("within(org.springframework.data.jpa.repository.JpaRepository+)")
     public void annotatedRepositoryClass() {}
 
     @Pointcut("within(@org.springframework.stereotype.Service *)")
@@ -33,10 +33,10 @@ public class ApplicationLogAspect {
      * @throws Throwable If an exception occurs during method execution.
      */
     @Around("annotatedRepositoryClass() || annotatedServiceClass()")
-    public void writeLog(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object writeLog(ProceedingJoinPoint joinPoint) throws Throwable {
         String message = createMessage(joinPoint);
-        log.info(message);
-        joinPoint.proceed();
+        log.debug(message);
+        return joinPoint.proceed();
     }
 
     /**
