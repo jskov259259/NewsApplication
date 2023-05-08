@@ -18,6 +18,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.Serializable;
 
+/**
+ * Configuration class for redis beans
+ * @author Dzmitry Kalustau
+ */
 @Configuration
 @AutoConfigureAfter(RedisAutoConfiguration.class)
 @EnableCaching

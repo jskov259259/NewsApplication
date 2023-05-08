@@ -33,6 +33,10 @@ import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_SORT_BY;
 import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 import static ru.clevertec.kalustau.util.JsonProtobufUtility.toJson;
 
+/**
+ * REST controller for News operations.
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(NEWS_URL)
@@ -42,6 +46,14 @@ public class NewsController {
 
     private final NewsService newsService;
 
+    /**
+     * API Point for returning news page.
+     * @param search parameter for filtered search, example: http://localhost:8080/news?search=title:text,id>5
+     * @param pageNo parameter for a specific page
+     * @param pageSize parameter for page size
+     * @param sortBy parameter for sorting the result
+     * @return A JSON representation of the news
+     */
     @Operation(summary = "Retrieve all news", description = "Get list of all news")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
@@ -55,6 +67,11 @@ public class NewsController {
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
+    /**
+     * API Point for returning news by id.
+     * @param id parameter for the id of a certain news
+     * @return A JSON representation of the news
+     */
     @Operation(summary = "Retrieve a news by Id", description = "Get a News object by specifying its id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") }),
@@ -65,6 +82,11 @@ public class NewsController {
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
+    /**
+     * API Point for saving news.
+     * @param newsDto object to save
+     * @return A JSON representation of the created news
+     */
     @Operation(summary = "Post new news", description = "Save new news in DB")
     @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
@@ -74,6 +96,12 @@ public class NewsController {
         return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);
     }
 
+    /**
+     * API Point for updating news by id.
+     * @param newsDto object to update
+     * @param id id of the news to be updated
+     * @return A JSON representation of the updated news
+     */
     @Operation(summary = "Update news", description = "Update existed news by id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") }),
@@ -85,6 +113,11 @@ public class NewsController {
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
+    /**
+     * API Point for deleting news.
+     * @param id id of the news to be deleted
+     * @return response about the successful deletion of the news
+     */
     @Operation(summary = "Delete news", description = "Delete news by id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") })})
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -33,6 +33,10 @@ import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_SORT_BY;
 import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 import static ru.clevertec.kalustau.util.JsonProtobufUtility.toJson;
 
+/**
+ * REST controller for Comment operations.
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 @RestController
 @ControllerLog
@@ -41,6 +45,14 @@ public class CommentController {
 
     private final CommentService commentsService;
 
+    /**
+     * API Point for returning all comments.
+     * @param search parameter for filtered search, example: http://localhost:8080/comments?search=userName:doe,id>5
+     * @param pageNo parameter for a specific page
+     * @param pageSize parameter for page size
+     * @param sortBy parameter for sorting the result
+     * @return A JSON representation of the comments
+     */
     @Operation(summary = "Retrieve all Comments", description = "Get list of all comments for all news")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
                     mediaType = "application/json") })})
@@ -54,6 +66,11 @@ public class CommentController {
         return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
     }
 
+    /**
+     * API Point for returning comment by id.
+     * @param id parameter for the id of a certain comment
+     * @return A JSON representation of the comment
+     */
     @Operation(summary = "Retrieve a comment by Id", description = "Get a Tutorial object by specifying its id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
             mediaType = "application/json") }),
@@ -64,6 +81,14 @@ public class CommentController {
         return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
     }
 
+    /**
+     * API Point for returning all comments by specifying news id.
+     * @param newsId parameter for the id of a certain news
+     * @param pageNo parameter for a specific page
+     * @param pageSize parameter for page size
+     * @param sortBy parameter for sorting the result
+     * @return A JSON representation of the comments of the given news
+     */
     @Operation(summary = "Retrieve all Comments by news ID", description = "Get list of all comments by news id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
             mediaType = "application/json") }),
@@ -79,6 +104,12 @@ public class CommentController {
         return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
     }
 
+    /**
+     * API Point for saving comment.
+     * @param newsId parameter for the id of a certain news
+     * @param commentDto object to save a comment to a specific news
+     * @return A JSON representation of the created comment
+     */
     @Operation(summary = "Post new comment", description = "Save new comment for news")
     @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = Comment.class),
             mediaType = "application/json") })})
@@ -90,6 +121,12 @@ public class CommentController {
         return new ResponseEntity<>(toJson(createdComment), HttpStatus.CREATED);
     }
 
+    /**
+     * API Point for updating comment by id.
+     * @param commentDto object to update
+     * @param id id of the comment to be updated
+     * @return A JSON representation of the updated comment
+     */
     @Operation(summary = "Update comment", description = "Update existed comment by id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Comment.class),
             mediaType = "application/json") }),
@@ -101,6 +138,11 @@ public class CommentController {
         return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
     }
 
+    /**
+     * API Point for deleting comment.
+     * @param id id of the comment to be deleted
+     * @return response about the successful deletion of the comment
+     */
     @Operation(summary = "Delete comment", description = "Delete comment by id")
     @ApiResponses({@ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") })})
     @DeleteMapping(value = COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

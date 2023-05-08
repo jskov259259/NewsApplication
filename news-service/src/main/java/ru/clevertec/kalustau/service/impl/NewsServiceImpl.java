@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing news.
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -41,6 +45,9 @@ public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Cacheable(cacheNames = "newsList")
     public List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
@@ -56,6 +63,9 @@ public class NewsServiceImpl implements NewsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Cacheable(key = "#id")
     public NewsDto findById(Long id) {
@@ -65,6 +75,9 @@ public class NewsServiceImpl implements NewsService {
         return newsMapper.newsToDto(news);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CachePut(key = "#newsDto")
@@ -76,6 +89,9 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CachePut(key = "#newsDto.id")
@@ -89,6 +105,9 @@ public class NewsServiceImpl implements NewsService {
         return newsMapper.newsToDto(updatedNews);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     @CacheEvict(key = "#id")
