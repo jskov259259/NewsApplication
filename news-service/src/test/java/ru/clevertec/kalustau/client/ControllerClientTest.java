@@ -34,6 +34,7 @@ import static ru.clevertec.kalustau.client.util.WireMockUtil.executeDeleteReques
 import static ru.clevertec.kalustau.client.util.WireMockUtil.executeGetRequest;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.executePostRequest;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.executePutRequest;
+import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 
 @ExtendWith(WireMockExtension.class)
 class ControllerClientTest extends WireMockExtension {
@@ -73,9 +74,27 @@ class ControllerClientTest extends WireMockExtension {
         assertThat(buildCommentDTOResponse()).isEqualTo(responseString);
     }
 
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
+    void checkFindAllByNewsId(long id) throws IOException {
+        stubFor(WireMock.get(urlPathMatching(NEWS_URL + "/" + id + "/comments"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(buildCommentDTOListResponse())));
+
+        HttpResponse httpResponse = executeGetRequest(NEWS_URL + "/" + id + "/comments");
+        String responseString = convertResponseToString(httpResponse);
+
+        verify(getRequestedFor(urlEqualTo(NEWS_URL + "/" + id + "/comments")));
+        assertThat(httpResponse.getStatusLine().getStatusCode()).isEqualTo(200);
+        assertThat(httpResponse.getFirstHeader("Content-Type").getValue()).isEqualTo("application/json");
+        assertThat(buildCommentDTOListResponse()).isEqualTo(responseString);
+    }
+
     @Test
     void checkSave() throws IOException {
-        stubFor(WireMock.post(urlEqualTo(COMMENTS_URL))
+        stubFor(WireMock.post(urlEqualTo(NEWS_URL + "/1/comments"))
                 .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(containing("\"id\": \"1\""))
                 .withRequestBody(containing("\"text\": \"Some text1\""))
@@ -87,9 +106,9 @@ class ControllerClientTest extends WireMockExtension {
         String jsonString = convertInputStreamToString(jsonInputStream);
         StringEntity entity = new StringEntity(jsonString);
 
-        HttpResponse response = executePostRequest(COMMENTS_URL, entity);
+        HttpResponse response = executePostRequest(NEWS_URL + "/1/comments", entity);
 
-        verify(postRequestedFor(urlEqualTo(COMMENTS_URL))
+        verify(postRequestedFor(urlEqualTo(NEWS_URL + "/1/comments"))
                 .withHeader("Content-Type", equalTo("application/json")));
         assertEquals(201, response.getStatusLine().getStatusCode());
     }
