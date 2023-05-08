@@ -6,4 +6,6 @@ spring:
     show-sql: true
   liquibase:
     enabled: false
-
+  jackson:
+    serialization:
+      fail-on-self-references: false

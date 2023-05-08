@@ -48,6 +48,10 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
     testImplementation "org.testcontainers:postgresql:1.17.6"
+    testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.0'
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
     implementation 'redis.clients:jedis:4.4.0-rc1'
 
     implementation 'com.google.protobuf:protobuf-java-util:3.22.0'

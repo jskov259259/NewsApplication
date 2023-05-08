@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "time": "2023-01-01T05:15:00",
+    "text": "Some text1",
+    "userName": "User1"
+  },
+  {
+    "id": "2",
+    "time": "2023-01-01T12:15:00",
+    "text": "Some text2",
+    "userName": "User2"
+  }
+]
