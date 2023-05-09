@@ -1,7 +1,7 @@
 CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
-    login VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL
@@ -23,31 +23,37 @@ CREATE TABLE users_roles
 );
 
 
-INSERT INTO public.users(id, login, password, first_name, last_name)
-VALUES (1, 'anton', '1234', 'anton', 'Ivanov');
-
-INSERT INTO public.users(id, login, password, first_name, last_name)
-VALUES (2, 'ivan', '5', 'ivan', 'Ivanov');
-
-INSERT INTO public.users(id, login, password, first_name, last_name)
-VALUES (3, 'grisha', '123456', 'grisha', 'Petrov');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (1, 'Admin', '1234', 'Dzmitry', 'Kalustau');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (2, 'Ignavia', '1234', 'Ignavia', 'Archil');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (3, 'Polli', '1234', 'Polli', 'Estela');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (4, 'Sycosis', '1234', 'Sycosis', 'Urho');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (5, 'Jentacular', '1234', 'Jentacular', 'Adelheid');
+INSERT INTO public.users(id, username, password, first_name, last_name)
+VALUES (6, 'LimanYawp', '1234', 'Liman', 'Yawp');
 
 
 INSERT INTO public.roles(id, role)
 VALUES (1, 'ADMIN');
-
 INSERT INTO public.roles(id, role)
 VALUES (2, 'JOURNALIST');
-
 INSERT INTO public.roles(id, role)
 VALUES (3, 'SUBSCRIBER');
 
 
 INSERT INTO public.users_roles(user_id, role_id)
 VALUES (1, 1);
-
 INSERT INTO public.users_roles(user_id, role_id)
 VALUES (2, 2);
-
 INSERT INTO public.users_roles(user_id, role_id)
-VALUES (3, 3);
+VALUES (3, 2);
+INSERT INTO public.users_roles(user_id, role_id)
+VALUES (4, 2);
+INSERT INTO public.users_roles(user_id, role_id)
+VALUES (5, 3);
+INSERT INTO public.users_roles(user_id, role_id)
+VALUES (6, 3);

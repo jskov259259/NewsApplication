@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
@@ -28,6 +29,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserAdmin;
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserHasRightsToModification;
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserJournalist;
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserSubscriber;
+
 /**
  * Service implementation for managing comments.
  * @author Dzmitry Kalustau
@@ -41,6 +47,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
     private final CommentMapper commentMapper;
+    private final UserUtility userUtility;
 
     /**
      * {@inheritDoc}
@@ -91,12 +98,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @CachePut(key = "#commentDtoRequest")
-    public Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest) {
+    public Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserSubscriber(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
         Comment comment = commentMapper.dtoToComment(commentDtoRequest);
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
         comment.setTime(LocalDateTime.now());
+        comment.setUserName(user.getUsername());
 
         Comment createdComment = commentRepository.save(comment);
         return commentMapper.commentToDto(createdComment);
@@ -108,9 +120,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @CachePut(key = "#commentDtoRequest.id")
-    public Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest) {
+    public Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserSubscriber(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
         Comment currentComment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
+
+        if (!isUserHasRightsToModification(user, currentComment.getUserName())) {
+            throw new RuntimeException("No permission to perform operation");
+        }
 
         Comment newComment = commentMapper.dtoToComment(commentDtoRequest);
         updateComment(currentComment, newComment);
@@ -124,13 +144,23 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @CacheEvict(key = "#id")
-    public void deleteById(Long tagId) {
-        commentRepository.deleteById(tagId);
+    public void deleteById(Long id, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserSubscriber(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
+        Comment commentToDelete = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
+
+        if (!isUserHasRightsToModification(user, commentToDelete.getUserName())) {
+            throw new RuntimeException("No permission to perform operation");
+        }
+
+        commentRepository.deleteById(id);
     }
 
     private void updateComment(Comment currentComment, Comment newComment) {
         if (Objects.nonNull(newComment.getText())) currentComment.setText(newComment.getText());
-        if (Objects.nonNull(newComment.getUserName())) currentComment.setUserName(newComment.getUserName());
     }
 
 }

@@ -1,6 +1,7 @@
 package ru.clevertec.kalustau.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,6 +41,9 @@ public class News implements BaseEntity<Long> {
     private String title;
 
     private String text;
+
+    @Column(name = "username")
+    private String userName;
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy="news")

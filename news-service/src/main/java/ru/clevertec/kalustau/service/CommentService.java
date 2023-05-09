@@ -39,19 +39,19 @@ public interface CommentService {
      * @param commentDtoRequest object to save a comment to a specific news
      * @return created comment
      */
-    Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest);
+    Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest, String token);
 
     /**
      * Update news by specifying id.
      * @param commentDtoRequest object to update
      * @return updated news
      */
-    Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest);
+    Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest, String token);
 
     /**
      * Delete comment by specifying id.
      * @param id id to delete
      */
-    void deleteById(Long id);
+    void deleteById(Long id, String token);
 
 }

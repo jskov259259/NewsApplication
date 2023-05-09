@@ -33,7 +33,7 @@ public class User implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String login;
+    private String username;
 
     private String password;
 
@@ -51,8 +51,8 @@ public class User implements BaseEntity<Long> {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    public User(String login, String password, String firstName, String lastName, Set<Role> roles) {
-        this.login = login;
+    public User(String username, String password, String firstName, String lastName, Set<Role> roles) {
+        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;

@@ -32,18 +32,18 @@ public interface NewsService {
      * @param newsDto object to save
      * @return created news
      */
-    Proto.NewsDtoResponse save(NewsDtoRequest newsDto);
+    Proto.NewsDtoResponse save(NewsDtoRequest newsDto, String token);
 
     /**
      * Update news by specifying id.
      * @param newsDto object to save
      * @return updated news
      */
-    Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDto);
+    Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDto, String token);
 
     /**
      * Delete news by specifying id.
      * @param id id to delete
      */
-    void deleteById(Long id);
+    void deleteById(Long id, String token);
 }

@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.dto;
+package ru.clevertec.kalustau.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDtoRequest {
+public class Role {
 
-    private String text;
+    private Long id;
+
+    private RoleEnum role;
 
 }

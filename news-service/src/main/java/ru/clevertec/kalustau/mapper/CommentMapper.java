@@ -15,7 +15,6 @@ public class CommentMapper {
     public Comment dtoToComment(CommentDtoRequest commentDtoRequest) {
         return Comment.builder()
                 .text(commentDtoRequest.getText())
-                .userName(commentDtoRequest.getUserName())
                 .build();
     }
 

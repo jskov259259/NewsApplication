@@ -16,7 +16,7 @@ public class Controller {
 
     private final AuthService authService;
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('JOURNALIST')")
     @GetMapping("hello/user")
     public ResponseEntity<String> helloUser() {
         final JwtAuthentication authInfo = authService.getAuthInfo();
@@ -27,6 +27,10 @@ public class Controller {
     @GetMapping("hello/admin")
     public ResponseEntity<String> helloAdmin() {
         final JwtAuthentication authInfo = authService.getAuthInfo();
+        System.out.println(authInfo.getFirstName());
+        System.out.println(authInfo.getName());
+        System.out.println(authInfo.getUsername());
+        System.out.println(authInfo.getRoles());
         return ResponseEntity.ok("Hello admin " + authInfo.getPrincipal() + "!");
     }
 

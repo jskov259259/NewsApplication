@@ -37,3 +37,9 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: false
+
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    nullable: false

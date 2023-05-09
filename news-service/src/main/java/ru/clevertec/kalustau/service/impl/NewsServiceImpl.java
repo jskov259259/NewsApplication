@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.dto.NewsDtoRequest;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
@@ -27,6 +28,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserAdmin;
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserHasRightsToModification;
+import static ru.clevertec.kalustau.service.impl.UserUtility.isUserJournalist;
+
 /**
  * Service implementation for managing news.
  * @author Dzmitry Kalustau
@@ -39,6 +44,7 @@ public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
+    private final UserUtility userUtility;
 
     /**
      * {@inheritDoc}
@@ -73,9 +79,14 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     @CachePut(key = "#newsDtoRequest")
-    public Proto.NewsDtoResponse save(NewsDtoRequest newsDtoRequest) {
+    public Proto.NewsDtoResponse save(NewsDtoRequest newsDtoRequest, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
         News news = newsMapper.dtoToNews(newsDtoRequest);
         news.setTime(LocalDateTime.now());
+        news.setUserName(user.getUsername());
         News createdNews = newsRepository.save(news);
         return newsMapper.newsToDto(createdNews);
     }
@@ -87,9 +98,18 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     @CachePut(key = "#newsDtoRequest.id")
-    public Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDtoRequest) {
+    public Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDtoRequest, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
+
         News currentNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
+
+        if (!isUserHasRightsToModification(user, currentNews.getUserName())) {
+            throw new RuntimeException("No permission to perform operation");
+        }
 
         News newNews = newsMapper.dtoToNews(newsDtoRequest);
         updateNews(currentNews, newNews);
@@ -103,7 +123,18 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     @CacheEvict(key = "#id")
-    public void deleteById(Long id) {
+    public void deleteById(Long id, String token) {
+        User user = userUtility.getUserByToken(token);
+        if (!(isUserAdmin(user) || isUserJournalist(user))) {
+            throw new RuntimeException("No permission to perform operation");
+        }
+        News newsToDelete = newsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
+
+        if (!isUserHasRightsToModification(user, newsToDelete.getUserName())) {
+            throw new RuntimeException("No permission to perform operation");
+        }
+
         newsRepository.deleteById(id);
     }
 
