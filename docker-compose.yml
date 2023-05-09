@@ -20,6 +20,38 @@ services:
       - postgres
       - cache
       - config-server
+      - eureka-server
+
+  user-service:
+    build: ./user-service/.
+    ports:
+      - "8081:8081"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: clevertec
+      CLOUD_CONFIG_URI: http://config-server:8888
+    networks:
+      - postgres-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - config-server
+      - eureka-server
+
+  config-server:
+    build: ./config-server/.
+    ports:
+      - "8888:8888"
+    networks:
+      - postgres-network
+
+  eureka-server:
+    build: ./eureka-server/.
+    ports:
+      - "8761:8761"
+    networks:
+      - postgres-network
 
   postgres:
     image: postgres:13.5
@@ -32,13 +64,6 @@ services:
     networks:
       - postgres-network
     restart: unless-stopped
-
-  config-server:
-    build: ./config-server/.
-    ports:
-      - "8888:8888"
-    networks:
-      - postgres-network
 
   cache:
     image: "redis"
