@@ -13,7 +13,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.CommentDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
@@ -40,7 +41,8 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.TestData.getComment;
-import static ru.clevertec.kalustau.util.TestData.getCommentDto;
+import static ru.clevertec.kalustau.util.TestData.getCommentDtoRequest;
+import static ru.clevertec.kalustau.util.TestData.getCommentDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getCommentList;
 import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
@@ -66,7 +68,7 @@ class CommentServiceImplTest {
     @Test
     void checkFindAll() {
         Comment comment = getCommentList().get(0);
-        CommentDto commentDto = getCommentDto();
+        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
         Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getCommentList()))
@@ -74,7 +76,7 @@ class CommentServiceImplTest {
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        List<CommentDto> commentDtoList = commentService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<Proto.CommentDtoResponse> commentDtoList = commentService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         verify(commentMapper, times(3)).commentToDto(any());
@@ -86,14 +88,14 @@ class CommentServiceImplTest {
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
     void checkFindById(Long id) {
         Comment comment = getComment();
-        CommentDto commentDto = getCommentDto();
+        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
 
         doReturn(Optional.of(comment))
                 .when(commentRepository).findById(id);
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        CommentDto result = commentService.findById(id);
+        Proto.CommentDtoResponse result = commentService.findById(id);
 
         verify(commentRepository).findById(anyLong());
         verify(commentMapper).commentToDto(any());
@@ -112,7 +114,7 @@ class CommentServiceImplTest {
     @Test
     void checkFindAllByNewsId() {
         Comment comment = getCommentList().get(0);
-        CommentDto commentDto = getCommentDto();
+        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
 
         doReturn(new PageImpl<>(getCommentList()))
                 .when(commentRepository).findAllByNewsId(TEST_ID, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
@@ -121,7 +123,7 @@ class CommentServiceImplTest {
         doReturn(commentDto)
                 .when(commentMapper).commentToDto(comment);
 
-        List<CommentDto> commentDtoList = commentService.findAllByNewsId(TEST_ID,
+        List<Proto.CommentDtoResponse> commentDtoList = commentService.findAllByNewsId(TEST_ID,
                 TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(newsRepository).existsById(TEST_ID);
@@ -145,47 +147,51 @@ class CommentServiceImplTest {
     @Test
     void checkSave() {
         Comment comment = getComment();
-        CommentDto commentDto = getCommentDto();
+        CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
+        Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
 
         doReturn(comment)
                 .when(commentRepository).save(commentCaptor.capture());
         doReturn(Optional.of(getNews()))
                 .when(newsRepository).findById(TEST_ID);
         doReturn(comment)
-                .when(commentMapper).dtoToComment(commentDto);
-        doReturn(commentDto)
+                .when(commentMapper).dtoToComment(commentDtoRequest);
+        doReturn(commentDtoResponse)
                 .when(commentMapper).commentToDto(comment);
 
-        CommentDto result = commentService.save(TEST_ID, commentDto);
+        Proto.CommentDtoResponse result = commentService.save(TEST_ID, commentDtoRequest);
         verify(newsRepository).findById(TEST_ID);
         verify(commentRepository).save(comment);
-        verify(commentMapper).dtoToComment(commentDto);
+        verify(commentMapper).dtoToComment(commentDtoRequest);
         verify(commentMapper).commentToDto(comment);
-        assertThat(result).isEqualTo(commentDto);
+        assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
+        assertThat(result.getUserName()).isEqualTo(commentDtoRequest.getUserName());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
     }
 
     @Test
     void checkUpdate() {
         Comment comment = getComment();
-        CommentDto commentDto = getCommentDto();
+        CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
+        Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
 
         doReturn(Optional.of(comment))
                 .when(commentRepository).findById(TEST_ID);
         doReturn(comment)
                 .when(commentRepository).save(commentCaptor.capture());
         doReturn(comment)
-                .when(commentMapper).dtoToComment(commentDto);
-        doReturn(commentDto)
+                .when(commentMapper).dtoToComment(commentDtoRequest);
+        doReturn(commentDtoResponse)
                 .when(commentMapper).commentToDto(comment);
 
-        CommentDto result = commentService.update(TEST_ID, commentDto);
+        Proto.CommentDtoResponse result = commentService.update(TEST_ID, commentDtoRequest);
 
         verify(commentRepository).findById(anyLong());
         verify(commentRepository).save(comment);
-        verify(commentMapper).dtoToComment(commentDto);
+        verify(commentMapper).dtoToComment(commentDtoRequest);
         verify(commentMapper).commentToDto(comment);
-        assertThat(result).isEqualTo(commentDto);
+        assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
+        assertThat(result.getUserName()).isEqualTo(commentDtoRequest.getUserName());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
     }
 
@@ -193,7 +199,7 @@ class CommentServiceImplTest {
     void checkUpdateShouldThrowResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDto()));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDtoRequest()));
         verify(commentRepository).findById(anyLong());
     }
 

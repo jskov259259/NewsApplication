@@ -2,8 +2,9 @@ package ru.clevertec.kalustau.mapper;
 
 import com.google.protobuf.Timestamp;
 import org.springframework.stereotype.Component;
+import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.model.Comment;
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.Proto;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -11,18 +12,16 @@ import java.time.ZoneId;
 @Component
 public class CommentMapper {
 
-    public Comment dtoToComment(CommentDto commentDto) {
+    public Comment dtoToComment(CommentDtoRequest commentDtoRequest) {
         return Comment.builder()
-                .id(commentDto.getId())
-                //                .time(commentDto.getTime())
-                .text(commentDto.getText())
-                .userName(commentDto.getUserName())
+                .text(commentDtoRequest.getText())
+                .userName(commentDtoRequest.getUserName())
                 .build();
     }
 
-    public CommentDto commentToDto(Comment comment) {
+    public Proto.CommentDtoResponse commentToDto(Comment comment) {
         Instant instant = comment.getTime().atZone(ZoneId.systemDefault()).toInstant();
-        return CommentDto
+        return Proto.CommentDtoResponse
                 .newBuilder()
                 .setId(comment.getId())
                 .setTime(Timestamp.newBuilder()

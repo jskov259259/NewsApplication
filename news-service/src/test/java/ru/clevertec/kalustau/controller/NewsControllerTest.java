@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,7 +34,8 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
-import static ru.clevertec.kalustau.util.TestData.getNewsDto;
+import static ru.clevertec.kalustau.util.TestData.getNewsDtoRequest;
+import static ru.clevertec.kalustau.util.TestData.getNewsDtoResponse;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -50,6 +52,7 @@ class NewsControllerTest {
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(newsController)
+//                .setMessageConverters(new ProtobufHttpMessageConverter())
                 .build();
     }
 
@@ -60,7 +63,7 @@ class NewsControllerTest {
 
     @Test
     void checkFindAll() throws Exception {
-        doReturn(Collections.singletonList(getNewsDto()))
+        doReturn(Collections.singletonList(getNewsDtoResponse()))
                 .when(newsService).findAll(any(), anyInt(), anyInt(), anyString());
 
         LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
@@ -82,7 +85,7 @@ class NewsControllerTest {
 
     @Test
     void checkFindById() throws Exception {
-        doReturn(getNewsDto())
+        doReturn(getNewsDtoResponse())
                 .when(newsService).findById(anyLong());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/news/1")
@@ -98,13 +101,12 @@ class NewsControllerTest {
 
     @Test
     void checkCreate() throws Exception {
-        doReturn(getNewsDto())
+        doReturn(getNewsDtoResponse())
                 .when(newsService).save(any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getNewsDto()))
-//                        .content(toJson(getNewsDto()))
+                .contentType("application/json")
+                .content(new ObjectMapper().writeValueAsString(getNewsDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -112,17 +114,17 @@ class NewsControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")));
 
-        Mockito.verify(newsService).save(getNewsDto());
+        Mockito.verify(newsService).save(getNewsDtoRequest());
     }
 
     @Test
     void checkUpdate() throws Exception {
-        doReturn(getNewsDto())
+        doReturn(getNewsDtoResponse())
                 .when(newsService).update(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/news/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getNewsDto()))
+                .content(new ObjectMapper().writeValueAsString(getNewsDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -130,7 +132,7 @@ class NewsControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("title", Matchers.is("Title1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")));
 
-        Mockito.verify(newsService).update(TEST_ID, getNewsDto());
+        Mockito.verify(newsService).update(TEST_ID, getNewsDtoRequest());
     }
 
     @Test

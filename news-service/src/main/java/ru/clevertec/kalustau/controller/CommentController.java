@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.annotation.ControllerLog;
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.CommentDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.service.CommentService;
 
@@ -62,7 +63,7 @@ public class CommentController {
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<CommentDto> comments = commentsService.findAll(search, pageNo, pageSize, sortBy);
+        List<Proto.CommentDtoResponse> comments = commentsService.findAll(search, pageNo, pageSize, sortBy);
         return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
     }
 
@@ -77,7 +78,7 @@ public class CommentController {
             @ApiResponse(description = "Such comment not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value=COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findById(@PathVariable Long id) {
-        CommentDto comment = commentsService.findById(id);
+        Proto.CommentDtoResponse comment = commentsService.findById(id);
         return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
     }
 
@@ -100,14 +101,14 @@ public class CommentController {
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
 
-        List<CommentDto> comments = commentsService.findAllByNewsId(newsId, pageNo, pageSize, sortBy);
+        List<Proto.CommentDtoResponse> comments = commentsService.findAllByNewsId(newsId, pageNo, pageSize, sortBy);
         return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
     }
 
     /**
      * API Point for saving comment.
      * @param newsId parameter for the id of a certain news
-     * @param commentDto object to save a comment to a specific news
+     * @param commentDtoRequest object to save a comment to a specific news
      * @return A JSON representation of the created comment
      */
     @Operation(summary = "Post new comment", description = "Save new comment for news")
@@ -116,14 +117,14 @@ public class CommentController {
     @PostMapping(value = NEWS_URL + "/{newsId}/comments", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@PathVariable(value = "newsId") Long newsId,
-                                             @RequestBody @Valid CommentDto commentDto) {
-        CommentDto createdComment = commentsService.save(newsId, commentDto);
+                                             @RequestBody @Valid CommentDtoRequest commentDtoRequest) {
+        Proto.CommentDtoResponse createdComment = commentsService.save(newsId, commentDtoRequest);
         return new ResponseEntity<>(toJson(createdComment), HttpStatus.CREATED);
     }
 
     /**
      * API Point for updating comment by id.
-     * @param commentDto object to update
+     * @param commentDtoRequest object to update
      * @param id id of the comment to be updated
      * @return A JSON representation of the updated comment
      */
@@ -133,8 +134,8 @@ public class CommentController {
             @ApiResponse(description = "Such comment not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @PutMapping(value = COMMENTS_URL + "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody @Valid CommentDto commentDto) {
-        CommentDto comment = commentsService.update(id, commentDto);
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody @Valid CommentDtoRequest commentDtoRequest) {
+        Proto.CommentDtoResponse comment = commentsService.update(id, commentDtoRequest);
         return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
     }
 

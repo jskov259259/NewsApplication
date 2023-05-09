@@ -1,7 +1,9 @@
 package ru.clevertec.kalustau.service;
 
 import java.util.List;
-import ru.clevertec.kalustau.dto.Proto.NewsDto;
+
+import ru.clevertec.kalustau.dto.NewsDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 
 /**
  * A service interface that provides CRUD operations for news.
@@ -16,28 +18,28 @@ public interface NewsService {
      * @param sortBy parameter for sorting the result
      * @return a list of news.
      */
-    List<NewsDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
+    List<Proto.NewsDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
 
     /**
      * Return news by id.
      * @param id parameter for the id of a certain news
      * @return news with given id
      */
-    NewsDto findById(Long id);
+    Proto.NewsDtoResponse findById(Long id);
 
     /**
      * Create news.
      * @param newsDto object to save
      * @return created news
      */
-    NewsDto save(NewsDto newsDto);
+    Proto.NewsDtoResponse save(NewsDtoRequest newsDto);
 
     /**
      * Update news by specifying id.
      * @param newsDto object to save
      * @return updated news
      */
-    NewsDto update(Long id, NewsDto newsDto);
+    Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDto);
 
     /**
      * Delete news by specifying id.

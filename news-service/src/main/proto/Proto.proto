@@ -3,14 +3,14 @@ package ru.clevertec.kalustau.dto;
 
 import "google/protobuf/timestamp.proto";
 
-message NewsDto {
+message NewsDtoResponse {
   int64 id = 1;
   google.protobuf.Timestamp time = 2;
   string title = 3;
   string text = 4;
 }
 
-message CommentDto {
+message CommentDtoResponse {
   int64 id = 1;
   google.protobuf.Timestamp time = 2;
   string text = 3;

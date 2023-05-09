@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.buildCommentDTOListResponse;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.buildCommentDTOResponse;
 import static ru.clevertec.kalustau.controller.config.Constants.COMMENTS_URL;
@@ -110,7 +109,7 @@ class ControllerClientTest extends WireMockExtension {
 
         verify(postRequestedFor(urlEqualTo(NEWS_URL + "/1/comments"))
                 .withHeader("Content-Type", equalTo("application/json")));
-        assertEquals(201, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(201);
     }
 
     @ParameterizedTest
@@ -132,7 +131,7 @@ class ControllerClientTest extends WireMockExtension {
 
         verify(putRequestedFor(urlEqualTo(COMMENTS_URL + id))
                 .withHeader("Content-Type", equalTo("application/json")));
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
     }
 
     @ParameterizedTest
@@ -145,7 +144,7 @@ class ControllerClientTest extends WireMockExtension {
         HttpResponse response = executeDeleteRequest(COMMENTS_URL + id);
 
         verify(deleteRequestedFor(urlEqualTo(COMMENTS_URL + id)));
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
     }
 
 }

@@ -1,6 +1,7 @@
 package ru.clevertec.kalustau.service;
 
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.CommentDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 
 import java.util.List;
 
@@ -13,14 +14,14 @@ public interface CommentService {
      * @param sortBy parameter for sorting the result
      * @return a list of comments.
      */
-    List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
+    List<Proto.CommentDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
 
     /**
      * Return comment by id.
      * @param id parameter for the id of a certain comment
      * @return comment with given id
      */
-    CommentDto findById(Long id);
+    Proto.CommentDtoResponse findById(Long id);
 
     /**
      * Returns all comments by specifying news id.
@@ -30,22 +31,22 @@ public interface CommentService {
      * @param sortBy parameter for sorting the result
      * @return A JSON representation of the comments of the given news
      */
-    List<CommentDto> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy);
+    List<Proto.CommentDtoResponse> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy);
 
     /**
      * Create comment.
      * @param newsId parameter for the id of a certain news
-     * @param commentDto object to save a comment to a specific news
+     * @param commentDtoRequest object to save a comment to a specific news
      * @return created comment
      */
-    CommentDto save(Long newsId, CommentDto commentDto);
+    Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest);
 
     /**
      * Update news by specifying id.
-     * @param commentDto object to update
+     * @param commentDtoRequest object to update
      * @return updated news
      */
-    CommentDto update(Long id, CommentDto commentDto);
+    Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest);
 
     /**
      * Delete comment by specifying id.

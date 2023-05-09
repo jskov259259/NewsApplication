@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.clevertec.kalustau.controller.config.Constants.NEWS_URL;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.buildNewsDTOListResponse;
 import static ru.clevertec.kalustau.client.util.WireMockUtil.buildNewsDTOResponse;
@@ -91,7 +90,7 @@ class NewsClientTest extends WireMockExtension {
 
         verify(postRequestedFor(urlEqualTo(NEWS_URL))
                 .withHeader("Content-Type", equalTo("application/json")));
-        assertEquals(201, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(201);
     }
 
     @ParameterizedTest
@@ -113,7 +112,7 @@ class NewsClientTest extends WireMockExtension {
 
         verify(putRequestedFor(urlEqualTo(NEWS_URL + id))
                 .withHeader("Content-Type", equalTo("application/json")));
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
     }
 
     @ParameterizedTest
@@ -126,7 +125,7 @@ class NewsClientTest extends WireMockExtension {
         HttpResponse response = executeDeleteRequest(NEWS_URL + id);
 
         verify(deleteRequestedFor(urlEqualTo(NEWS_URL + id)));
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
     }
 
 }

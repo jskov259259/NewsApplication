@@ -13,11 +13,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import ru.clevertec.kalustau.dto.NewsDtoRequest;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.NewsServiceImpl;
-import ru.clevertec.kalustau.dto.Proto.NewsDto;
+import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -37,8 +38,10 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
+import static ru.clevertec.kalustau.util.TestData.getCommentDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getNews;
-import static ru.clevertec.kalustau.util.TestData.getNewsDto;
+import static ru.clevertec.kalustau.util.TestData.getNewsDtoRequest;
+import static ru.clevertec.kalustau.util.TestData.getNewsDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getNewsList;
 import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
 
@@ -60,7 +63,7 @@ class NewsServiceImplTest {
     @Test
     void checkFindAll() {
         News news = getNewsList().get(0);
-        NewsDto newsDto = getNewsDto();
+        Proto.NewsDtoResponse newsDto = getNewsDtoResponse();
         Specification<News> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getNewsList()))
@@ -68,7 +71,7 @@ class NewsServiceImplTest {
         doReturn(newsDto)
                 .when(newsMapper).newsToDto(news);
 
-        List<NewsDto> newsDtoList = newsService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<Proto.NewsDtoResponse> newsDtoList = newsService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(newsRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         verify(newsMapper, times(3)).newsToDto(any());
@@ -80,14 +83,14 @@ class NewsServiceImplTest {
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
     void checkFindById(Long id) {
         News news = getNews();
-        NewsDto newsDto = getNewsDto();
+        Proto.NewsDtoResponse newsDto = getNewsDtoResponse();
 
         doReturn(Optional.of(news))
                 .when(newsRepository).findById(id);
         doReturn(newsDto)
                 .when(newsMapper).newsToDto(news);
 
-        NewsDto result = newsService.findById(id);
+        Proto.NewsDtoResponse result = newsService.findById(id);
 
         verify(newsRepository).findById(anyLong());
         verify(newsMapper).newsToDto(any());
@@ -106,44 +109,48 @@ class NewsServiceImplTest {
     @Test
     void checkSave() {
         News news = getNews();
-        NewsDto newsDto = getNewsDto();
+        NewsDtoRequest newsDtoRequest = getNewsDtoRequest();
+        Proto.NewsDtoResponse newsDtoResponse = getNewsDtoResponse();
 
         doReturn(news)
                 .when(newsRepository).save(newsCaptor.capture());
         doReturn(news)
-                .when(newsMapper).dtoToNews(newsDto);
-        doReturn(newsDto)
+                .when(newsMapper).dtoToNews(newsDtoRequest);
+        doReturn(newsDtoResponse)
                 .when(newsMapper).newsToDto(news);
 
-        NewsDto result = newsService.save(newsDto);
+        Proto.NewsDtoResponse result = newsService.save(newsDtoRequest);
         verify(newsRepository).save(news);
-        verify(newsMapper).dtoToNews(newsDto);
+        verify(newsMapper).dtoToNews(newsDtoRequest);
         verify(newsMapper).newsToDto(news);
-        assertThat(result).isEqualTo(newsDto);
+        assertThat(result.getTitle()).isEqualTo(newsDtoRequest.getTitle());
+        assertThat(result.getText()).isEqualTo(newsDtoRequest.getText());
         assertThat(newsCaptor.getValue()).isEqualTo(news);
     }
 
     @Test
     void checkUpdate() {
         News news = getNews();
-        NewsDto certificateDto = getNewsDto();
+        NewsDtoRequest newsDtoRequest = getNewsDtoRequest();
+        Proto.NewsDtoResponse newsDtoResponse = getNewsDtoResponse();
 
         doReturn(Optional.of(news))
                 .when(newsRepository).findById(TEST_ID);
         doReturn(news)
                 .when(newsRepository).save(newsCaptor.capture());
         doReturn(news)
-                .when(newsMapper).dtoToNews(certificateDto);
-        doReturn(certificateDto)
+                .when(newsMapper).dtoToNews(newsDtoRequest);
+        doReturn(newsDtoResponse)
                 .when(newsMapper).newsToDto(news);
 
-        NewsDto result = newsService.update(TEST_ID, certificateDto);
+        Proto.NewsDtoResponse result = newsService.update(TEST_ID, newsDtoRequest);
 
         verify(newsRepository).findById(anyLong());
         verify(newsRepository).save(news);
-        verify(newsMapper).dtoToNews(certificateDto);
+        verify(newsMapper).dtoToNews(newsDtoRequest);
         verify(newsMapper).newsToDto(news);
-        assertThat(result).isEqualTo(certificateDto);
+        assertThat(result.getTitle()).isEqualTo(newsDtoRequest.getTitle());
+        assertThat(result.getText()).isEqualTo(newsDtoRequest.getText());
         assertThat(newsCaptor.getValue()).isEqualTo(news);
     }
 
@@ -151,7 +158,7 @@ class NewsServiceImplTest {
     void checkUpdateShouldThrowResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> newsService.update(TEST_ID, getNewsDto()));
+        assertThrows(ResourceNotFoundException.class, () -> newsService.update(TEST_ID, getNewsDtoRequest()));
         verify(newsRepository).findById(anyLong());
     }
 

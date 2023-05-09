@@ -32,7 +32,8 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
-import static ru.clevertec.kalustau.util.TestData.getCommentDto;
+import static ru.clevertec.kalustau.util.TestData.getCommentDtoRequest;
+import static ru.clevertec.kalustau.util.TestData.getCommentDtoResponse;
 
 @ExtendWith(MockitoExtension.class)
 class CommentControllerTest {
@@ -58,7 +59,7 @@ class CommentControllerTest {
 
     @Test
     void checkFindAll() throws Exception {
-        doReturn(Collections.singletonList(getCommentDto()))
+        doReturn(Collections.singletonList(getCommentDtoResponse()))
                 .when(commentService).findAll(any(), anyInt(), anyInt(), anyString());
 
         LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
@@ -80,7 +81,7 @@ class CommentControllerTest {
 
     @Test
     void checkFindById() throws Exception {
-        doReturn(getCommentDto())
+        doReturn(getCommentDtoResponse())
                 .when(commentService).findById(anyLong());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comments/1")
@@ -96,7 +97,7 @@ class CommentControllerTest {
 
     @Test
     void checkFindAllCommentsByNewsId() throws Exception {
-        doReturn(Collections.singletonList(getCommentDto()))
+        doReturn(Collections.singletonList(getCommentDtoResponse()))
                 .when(commentService).findAllByNewsId(anyLong(), anyInt(), anyInt(), anyString());
 
         LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
@@ -117,12 +118,12 @@ class CommentControllerTest {
 
     @Test
     void checkCreate() throws Exception {
-        doReturn(getCommentDto())
+        doReturn(getCommentDtoResponse())
                 .when(commentService).save(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news/1/comments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getCommentDto()))
+                .content(new ObjectMapper().writeValueAsString(getCommentDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -130,17 +131,17 @@ class CommentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("userName", Matchers.is("User1")));
 
-        Mockito.verify(commentService).save(TEST_ID, getCommentDto());
+        Mockito.verify(commentService).save(TEST_ID, getCommentDtoRequest());
     }
 
     @Test
     void checkUpdate() throws Exception {
-        doReturn(getCommentDto())
+        doReturn(getCommentDtoResponse())
                 .when(commentService).update(anyLong(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/comments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(getCommentDto()))
+                .content(new ObjectMapper().writeValueAsString(getCommentDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -148,7 +149,7 @@ class CommentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("text", Matchers.is("Text1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("userName", Matchers.is("User1")));
 
-        Mockito.verify(commentService).update(TEST_ID, getCommentDto());
+        Mockito.verify(commentService).update(TEST_ID, getCommentDtoRequest());
     }
 
     @Test

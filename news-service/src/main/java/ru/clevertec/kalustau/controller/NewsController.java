@@ -21,9 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.annotation.ControllerLog;
+import ru.clevertec.kalustau.dto.NewsDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.NewsService;
-import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class NewsController {
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<NewsDto> news = newsService.findAll(search, pageNo, pageSize, sortBy);
+        List<Proto.NewsDtoResponse> news = newsService.findAll(search, pageNo, pageSize, sortBy);
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
@@ -78,27 +79,27 @@ public class NewsController {
             @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findById(@PathVariable Long id) {
-        NewsDto news = newsService.findById(id);
+        Proto.NewsDtoResponse news = newsService.findById(id);
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 
     /**
      * API Point for saving news.
-     * @param newsDto object to save
+     * @param newsDtoRequest object to save
      * @return A JSON representation of the created news
      */
     @Operation(summary = "Post new news", description = "Save new news in DB")
     @ApiResponses({@ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = News.class),
             mediaType = "application/json") })})
-    @PostMapping(consumes = "application/x-protobuf", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> create(@RequestBody @Valid NewsDto newsDto) {
-        NewsDto createdNewsDto = newsService.save(newsDto);
+    @PostMapping(consumes =MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@RequestBody @Valid NewsDtoRequest newsDtoRequest) {
+        Proto.NewsDtoResponse createdNewsDto = newsService.save(newsDtoRequest);
         return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);
     }
 
     /**
      * API Point for updating news by id.
-     * @param newsDto object to update
+     * @param newsDtoRequest object to update
      * @param id id of the news to be updated
      * @return A JSON representation of the updated news
      */
@@ -108,8 +109,8 @@ public class NewsController {
             @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> update(@PathVariable Long id,
-                                                     @RequestBody @Valid NewsDto newsDto) {
-        NewsDto news = newsService.update(id, newsDto);
+                                                     @RequestBody @Valid NewsDtoRequest newsDtoRequest) {
+        Proto.NewsDtoResponse news = newsService.update(id, newsDtoRequest);
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
 

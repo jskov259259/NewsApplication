@@ -2,8 +2,9 @@ package ru.clevertec.kalustau.mapper;
 
 import com.google.protobuf.Timestamp;
 import org.springframework.stereotype.Component;
+import ru.clevertec.kalustau.dto.NewsDtoRequest;
+import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.News;
-import ru.clevertec.kalustau.dto.Proto.NewsDto;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -11,17 +12,16 @@ import java.time.ZoneId;
 @Component
 public class NewsMapper {
 
-    public News dtoToNews(NewsDto newsDTO) {
+    public News dtoToNews(NewsDtoRequest newsDtoRequest) {
         return News.builder()
-                .id(newsDTO.getId())
-                .title(newsDTO.getTitle())
-                .text(newsDTO.getText())
+                .title(newsDtoRequest.getTitle())
+                .text(newsDtoRequest.getText())
                 .build();
     }
 
-    public NewsDto newsToDto(News news) {
+    public Proto.NewsDtoResponse newsToDto(News news) {
         Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();
-        return NewsDto
+        return Proto.NewsDtoResponse
                 .newBuilder()
                 .setId(news.getId())
                 .setTitle(news.getTitle())

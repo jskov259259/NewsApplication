@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
@@ -20,7 +21,7 @@ import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
-import ru.clevertec.kalustau.dto.Proto.CommentDto;
+import ru.clevertec.kalustau.dto.Proto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Cacheable
-    public List<CommentDto> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
+    public List<Proto.CommentDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Specification<Comment> specification = new EntitySpecificationsBuilder<Comment>().getSpecification(search);
 
@@ -62,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Cacheable(key = "#id")
-    public CommentDto findById(Long id) {
+    public Proto.CommentDtoResponse findById(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
         return commentMapper.commentToDto(comment);
@@ -72,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
      * {@inheritDoc}
      */
     @Override
-    public List<CommentDto> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
+    public List<Proto.CommentDtoResponse> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
         if (!newsRepository.existsById(newsId)) {
             throw new ResourceNotFoundException("Not found News with id = " + newsId);
         }
@@ -89,9 +90,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#commentDto")
-    public CommentDto save(Long newsId, CommentDto commentDto) {
-        Comment comment = commentMapper.dtoToComment(commentDto);
+    @CachePut(key = "#commentDtoRequest")
+    public Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest) {
+        Comment comment = commentMapper.dtoToComment(commentDtoRequest);
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
@@ -106,12 +107,12 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#commentDto.id")
-    public CommentDto update(Long id, CommentDto commentDto) {
+    @CachePut(key = "#commentDtoRequest.id")
+    public Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest) {
         Comment currentComment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + commentDto.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
 
-        Comment newComment = commentMapper.dtoToComment(commentDto);
+        Comment newComment = commentMapper.dtoToComment(commentDtoRequest);
         updateComment(currentComment, newComment);
         Comment updatedComment = commentRepository.save(currentComment);
         return commentMapper.commentToDto(updatedComment);
