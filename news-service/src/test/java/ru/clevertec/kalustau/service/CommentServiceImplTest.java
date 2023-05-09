@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.dto.Proto;
 
@@ -22,6 +23,7 @@ import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.CommentServiceImpl;
+import ru.clevertec.kalustau.service.impl.UserUtility;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -40,12 +43,14 @@ import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_SIZE;
 import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
+import static ru.clevertec.kalustau.util.Constants.TEST_TOKEN;
 import static ru.clevertec.kalustau.util.TestData.getComment;
 import static ru.clevertec.kalustau.util.TestData.getCommentDtoRequest;
 import static ru.clevertec.kalustau.util.TestData.getCommentDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getCommentList;
 import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
+import static ru.clevertec.kalustau.util.TestData.getUser;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceImplTest {
@@ -61,6 +66,9 @@ class CommentServiceImplTest {
 
     @Mock
     private CommentMapper commentMapper;
+
+    @Mock
+    private UserUtility userUtility;
 
     @Captor
     ArgumentCaptor<Comment> commentCaptor;
@@ -149,6 +157,7 @@ class CommentServiceImplTest {
         Comment comment = getComment();
         CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
         Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
+        User user = getUser();
 
         doReturn(comment)
                 .when(commentRepository).save(commentCaptor.capture());
@@ -158,14 +167,16 @@ class CommentServiceImplTest {
                 .when(commentMapper).dtoToComment(commentDtoRequest);
         doReturn(commentDtoResponse)
                 .when(commentMapper).commentToDto(comment);
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.CommentDtoResponse result = commentService.save(TEST_ID, commentDtoRequest);
+        Proto.CommentDtoResponse result = commentService.save(TEST_ID, commentDtoRequest, TEST_TOKEN);
         verify(newsRepository).findById(TEST_ID);
         verify(commentRepository).save(comment);
         verify(commentMapper).dtoToComment(commentDtoRequest);
         verify(commentMapper).commentToDto(comment);
+        verify(userUtility).getUserByToken(anyString());
         assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
-        assertThat(result.getUserName()).isEqualTo(commentDtoRequest.getUserName());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
     }
 
@@ -174,6 +185,7 @@ class CommentServiceImplTest {
         Comment comment = getComment();
         CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
         Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
+        User user = getUser();
 
         doReturn(Optional.of(comment))
                 .when(commentRepository).findById(TEST_ID);
@@ -183,31 +195,48 @@ class CommentServiceImplTest {
                 .when(commentMapper).dtoToComment(commentDtoRequest);
         doReturn(commentDtoResponse)
                 .when(commentMapper).commentToDto(comment);
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.CommentDtoResponse result = commentService.update(TEST_ID, commentDtoRequest);
+        Proto.CommentDtoResponse result = commentService.update(TEST_ID, commentDtoRequest, TEST_TOKEN);
 
         verify(commentRepository).findById(anyLong());
         verify(commentRepository).save(comment);
         verify(commentMapper).dtoToComment(commentDtoRequest);
         verify(commentMapper).commentToDto(comment);
+        verify(userUtility).getUserByToken(anyString());
         assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
-        assertThat(result.getUserName()).isEqualTo(commentDtoRequest.getUserName());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
     }
 
     @Test
     void checkUpdateShouldThrowResourceNotFoundException() {
+        User user = getUser();
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
         doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDtoRequest()));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDtoRequest(), TEST_TOKEN));
         verify(commentRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
     }
 
     @Test
     void checkDeleteById() {
+        User user = getUser();
+        Comment comment = getComment();
+
+        doReturn(Optional.of(comment))
+                .when(commentRepository).findById(TEST_ID);
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
         doNothing()
                 .when(commentRepository).deleteById(TEST_ID);
-        commentService.deleteById(TEST_ID);
+
+        commentService.deleteById(TEST_ID, TEST_TOKEN);
+
+        verify(commentRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
         verify(commentRepository).deleteById(anyLong());
     }
 

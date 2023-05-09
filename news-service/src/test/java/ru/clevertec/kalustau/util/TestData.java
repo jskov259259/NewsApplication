@@ -2,6 +2,9 @@ package ru.clevertec.kalustau.util;
 
 import com.google.common.base.Joiner;
 import org.springframework.data.jpa.domain.Specification;
+import ru.clevertec.kalustau.client.dto.Role;
+import ru.clevertec.kalustau.client.dto.RoleEnum;
+import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.dto.NewsDtoRequest;
 import ru.clevertec.kalustau.dto.criteria.SearchOperation;
@@ -11,7 +14,9 @@ import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.dto.Proto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,11 +58,18 @@ public class TestData {
     }
 
     public static CommentDtoRequest getCommentDtoRequest() {
-        return CommentDtoRequest.builder().text("Text1").userName("User1").build();
+        return CommentDtoRequest.builder().text("Text1").build();
     }
 
     public static Proto.CommentDtoResponse getCommentDtoResponse() {
         return Proto.CommentDtoResponse.newBuilder().setId(1L).setText("Text1").setUserName("User1").build();
+    }
+
+    public static User getUser() {
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role(1L, RoleEnum.ADMIN));
+        return User.builder().id(1L).username("User1").password("1234").firstName("Ivan").lastName("Ivanov")
+                .roles(roles).build();
     }
 
     public static <E extends BaseEntity<Long>> Specification<E> getTestSpecification(String search) {
