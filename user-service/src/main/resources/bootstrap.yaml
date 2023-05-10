@@ -1,0 +1,13 @@
+jwt:
+  secret:
+    access: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
+    refresh: zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==
+
+spring:
+  application:
+    name: user-service
+  cloud:
+    config:
+      uri: ${CLOUD_CONFIG_URI:http://localhost:8888}
+server:
+  port: 8081
