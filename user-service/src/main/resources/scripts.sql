@@ -1,7 +1,7 @@
 CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL
@@ -10,13 +10,13 @@ CREATE TABLE users
 CREATE TABLE roles
 (
     id BIGSERIAL PRIMARY KEY,
-    role VARCHAR(50) NOT NULL
+    role VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE users_roles
 (
-    user_id INT NOT NULL,
-    role_id INT NOT NULL,
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (role_id) REFERENCES roles(id),
     UNIQUE (user_id, role_id)
