@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -105,7 +106,7 @@ class NewsControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
                 .content(new ObjectMapper().writeValueAsString(getNewsDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -124,7 +125,7 @@ class NewsControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/news/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
                 .content(new ObjectMapper().writeValueAsString(getNewsDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -141,7 +142,7 @@ class NewsControllerTest {
         doNothing().when(newsService).deleteById(anyLong(), anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/news/1")
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 

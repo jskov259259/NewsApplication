@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -124,7 +125,7 @@ class CommentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news/1/comments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
                 .content(new ObjectMapper().writeValueAsString(getCommentDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -143,7 +144,7 @@ class CommentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/comments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
                 .content(new ObjectMapper().writeValueAsString(getCommentDtoRequest()))
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -160,7 +161,7 @@ class CommentControllerTest {
         doNothing().when(commentService).deleteById(anyLong(), anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/comments/1")
-                .header("Authorization", TEST_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 

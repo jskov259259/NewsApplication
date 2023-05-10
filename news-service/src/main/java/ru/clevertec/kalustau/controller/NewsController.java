@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -95,7 +96,7 @@ public class NewsController {
     @PostMapping(consumes =MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(
             @RequestBody @Valid NewsDtoRequest newsDtoRequest,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Proto.NewsDtoResponse createdNewsDto = newsService.save(newsDtoRequest, token);
         return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);
     }
@@ -114,7 +115,7 @@ public class NewsController {
     public ResponseEntity<String> update(
             @PathVariable Long id,
             @RequestBody @Valid NewsDtoRequest newsDtoRequest,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Proto.NewsDtoResponse news = newsService.update(id, newsDtoRequest, token);
         return new ResponseEntity<>(toJson(news), HttpStatus.OK);
     }
@@ -129,7 +130,7 @@ public class NewsController {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         newsService.deleteById(id, token);
         return new ResponseEntity(HttpStatus.OK);
     }

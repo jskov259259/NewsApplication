@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -120,7 +121,7 @@ public class CommentController {
     public ResponseEntity<String> create(
             @PathVariable(value = "newsId") Long newsId,
             @RequestBody @Valid CommentDtoRequest commentDtoRequest,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Proto.CommentDtoResponse createdComment = commentsService.save(newsId, commentDtoRequest, token);
         return new ResponseEntity<>(toJson(createdComment), HttpStatus.CREATED);
     }
@@ -140,7 +141,7 @@ public class CommentController {
     public ResponseEntity<String> update(
             @PathVariable Long id,
             @RequestBody @Valid CommentDtoRequest commentDtoRequest,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Proto.CommentDtoResponse comment = commentsService.update(id, commentDtoRequest, token);
         return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
     }
@@ -155,7 +156,7 @@ public class CommentController {
     @DeleteMapping(value = COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         commentsService.deleteById(id, token);
         return new ResponseEntity(HttpStatus.OK);
     }
