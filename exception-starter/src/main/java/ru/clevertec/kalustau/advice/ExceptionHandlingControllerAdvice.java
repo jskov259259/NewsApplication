@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.clevertec.kalustau.exceptions.AuthException;
+import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 
 /**
@@ -37,6 +38,17 @@ public class ExceptionHandlingControllerAdvice extends ResponseEntityExceptionHa
     @ExceptionHandler(value = { AuthException.class })
     protected ResponseEntity<Object> handleAuthException(AuthException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
+
+    /**
+     * Handles PermissionException and returns the response with the clarifying message and HTTP status code.
+     * @param ex the exception to be handled
+     * @param request the HTTP request
+     * @return the permission exception response
+     */
+    @ExceptionHandler(value = { PermissionException.class })
+    protected ResponseEntity<Object> handlePermissionException(PermissionException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     /**

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.dto.NewsDtoRequest;
+import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
@@ -82,7 +83,7 @@ public class NewsServiceImpl implements NewsService {
     public Proto.NewsDtoResponse save(NewsDtoRequest newsDtoRequest, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
-            throw new RuntimeException("No permission to perform operation");
+            throw new PermissionException("No permission to perform operation");
         }
         News news = newsMapper.dtoToNews(newsDtoRequest);
         news.setTime(LocalDateTime.now());
@@ -101,14 +102,14 @@ public class NewsServiceImpl implements NewsService {
     public Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDtoRequest, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
-            throw new RuntimeException("No permission to perform operation");
+            throw new PermissionException("No permission to perform operation");
         }
 
         News currentNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
 
         if (!isUserHasRightsToModification(user, currentNews.getUserName())) {
-            throw new RuntimeException("No permission to perform operation");
+            throw new PermissionException("No permission to perform operation");
         }
 
         News newNews = newsMapper.dtoToNews(newsDtoRequest);
@@ -126,13 +127,13 @@ public class NewsServiceImpl implements NewsService {
     public void deleteById(Long id, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
-            throw new RuntimeException("No permission to perform operation");
+            throw new PermissionException("No permission to perform operation");
         }
         News newsToDelete = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
 
         if (!isUserHasRightsToModification(user, newsToDelete.getUserName())) {
-            throw new RuntimeException("No permission to perform operation");
+            throw new PermissionException("No permission to perform operation");
         }
 
         newsRepository.deleteById(id);
