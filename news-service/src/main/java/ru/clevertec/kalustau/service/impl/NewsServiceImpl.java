@@ -86,7 +86,6 @@ public class NewsServiceImpl implements NewsService {
         return createdNews;
     }
 
-
     /**
      * {@inheritDoc}
      */

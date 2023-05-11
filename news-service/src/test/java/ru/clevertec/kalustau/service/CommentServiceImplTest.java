@@ -14,11 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.client.dto.User;
-import ru.clevertec.kalustau.dto.CommentDtoRequest;
-import ru.clevertec.kalustau.dto.Proto;
-
+import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
-import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
@@ -29,14 +26,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
@@ -45,12 +40,12 @@ import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.Constants.TEST_TOKEN;
 import static ru.clevertec.kalustau.util.TestData.getComment;
-import static ru.clevertec.kalustau.util.TestData.getCommentDtoRequest;
-import static ru.clevertec.kalustau.util.TestData.getCommentDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getCommentList;
 import static ru.clevertec.kalustau.util.TestData.getNews;
 import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
-import static ru.clevertec.kalustau.util.TestData.getUser;
+import static ru.clevertec.kalustau.util.TestData.getUserAdmin;
+import static ru.clevertec.kalustau.util.TestData.getUserSubscriber;
+import static ru.clevertec.kalustau.util.TestData.getUserWithoutRole;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceImplTest {
@@ -65,9 +60,6 @@ class CommentServiceImplTest {
     private NewsRepository newsRepository;
 
     @Mock
-    private CommentMapper commentMapper;
-
-    @Mock
     private UserUtility userUtility;
 
     @Captor
@@ -76,38 +68,30 @@ class CommentServiceImplTest {
     @Test
     void checkFindAll() {
         Comment comment = getCommentList().get(0);
-        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
         Specification<Comment> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getCommentList()))
                 .when(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
-        doReturn(commentDto)
-                .when(commentMapper).commentToDto(comment);
 
-        List<Proto.CommentDtoResponse> commentDtoList = commentService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<Comment> commentList = commentService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
-        verify(commentMapper, times(3)).commentToDto(any());
 
-        assertThat(commentDtoList.get(0)).isEqualTo(commentDto);
+        assertThat(commentList.get(0)).isEqualTo(comment);
     }
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
     void checkFindById(Long id) {
         Comment comment = getComment();
-        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
 
         doReturn(Optional.of(comment))
                 .when(commentRepository).findById(id);
-        doReturn(commentDto)
-                .when(commentMapper).commentToDto(comment);
 
-        Proto.CommentDtoResponse result = commentService.findById(id);
+        Comment result = commentService.findById(id);
 
         verify(commentRepository).findById(anyLong());
-        verify(commentMapper).commentToDto(any());
-        assertThat(result).isEqualTo(commentDto);
+        assertThat(result).isEqualTo(comment);
     }
 
     @ParameterizedTest
@@ -115,31 +99,28 @@ class CommentServiceImplTest {
     void checkFindByIdShouldThrowResourceNotFoundException(Long id) {
         doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> commentService.findById(id));
+        assertThatThrownBy(() -> commentService.findById(id))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(commentRepository).findById(anyLong());
     }
 
     @Test
     void checkFindAllByNewsId() {
         Comment comment = getCommentList().get(0);
-        Proto.CommentDtoResponse commentDto = getCommentDtoResponse();
 
         doReturn(new PageImpl<>(getCommentList()))
                 .when(commentRepository).findAllByNewsId(TEST_ID, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
         doReturn(Boolean.TRUE)
                 .when(newsRepository).existsById(TEST_ID);
-        doReturn(commentDto)
-                .when(commentMapper).commentToDto(comment);
 
-        List<Proto.CommentDtoResponse> commentDtoList = commentService.findAllByNewsId(TEST_ID,
+        List<Comment> commentList = commentService.findAllByNewsId(TEST_ID,
                 TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(newsRepository).existsById(TEST_ID);
         verify(commentRepository).findAllByNewsId(TEST_ID, PageRequest.of(TEST_PAGE_NO,
                 TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
-        verify(commentMapper, times(3)).commentToDto(any());
 
-        assertThat(commentDtoList.get(0)).isEqualTo(commentDto);
+        assertThat(commentList.get(0)).isEqualTo(comment);
     }
 
     @ParameterizedTest
@@ -147,83 +128,114 @@ class CommentServiceImplTest {
     void checkFindAllByNewsIdShouldThrowResourceNotFoundException() {
         doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).existsById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () ->
-                commentService.findAllByNewsId(TEST_ID, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY));
+        assertThatThrownBy(() -> commentService.findAllByNewsId(TEST_ID, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(newsRepository).existsById(TEST_ID);
     }
 
     @Test
     void checkSave() {
         Comment comment = getComment();
-        CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
-        Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
-        User user = getUser();
+        User user = getUserAdmin();
 
         doReturn(comment)
                 .when(commentRepository).save(commentCaptor.capture());
         doReturn(Optional.of(getNews()))
                 .when(newsRepository).findById(TEST_ID);
-        doReturn(comment)
-                .when(commentMapper).dtoToComment(commentDtoRequest);
-        doReturn(commentDtoResponse)
-                .when(commentMapper).commentToDto(comment);
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.CommentDtoResponse result = commentService.save(TEST_ID, commentDtoRequest, TEST_TOKEN);
+        Comment result = commentService.save(TEST_ID, comment, TEST_TOKEN);
         verify(newsRepository).findById(TEST_ID);
         verify(commentRepository).save(comment);
-        verify(commentMapper).dtoToComment(commentDtoRequest);
-        verify(commentMapper).commentToDto(comment);
         verify(userUtility).getUserByToken(anyString());
-        assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
+        assertThat(result.getText()).isEqualTo(comment.getText());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
+    }
+
+    @Test
+    void checkSaveShouldThrowPermissionExceptionForUserWithoutRole() {
+        Comment comment = getComment();
+        User user = getUserWithoutRole();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> commentService.save(TEST_ID, comment, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(userUtility).getUserByToken(anyString());
     }
 
     @Test
     void checkUpdate() {
         Comment comment = getComment();
-        CommentDtoRequest commentDtoRequest = getCommentDtoRequest();
-        Proto.CommentDtoResponse commentDtoResponse = getCommentDtoResponse();
-        User user = getUser();
+        User user = getUserAdmin();
 
         doReturn(Optional.of(comment))
                 .when(commentRepository).findById(TEST_ID);
         doReturn(comment)
                 .when(commentRepository).save(commentCaptor.capture());
-        doReturn(comment)
-                .when(commentMapper).dtoToComment(commentDtoRequest);
-        doReturn(commentDtoResponse)
-                .when(commentMapper).commentToDto(comment);
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.CommentDtoResponse result = commentService.update(TEST_ID, commentDtoRequest, TEST_TOKEN);
+        Comment result = commentService.update(TEST_ID, comment, TEST_TOKEN);
 
         verify(commentRepository).findById(anyLong());
         verify(commentRepository).save(comment);
-        verify(commentMapper).dtoToComment(commentDtoRequest);
-        verify(commentMapper).commentToDto(comment);
         verify(userUtility).getUserByToken(anyString());
-        assertThat(result.getText()).isEqualTo(commentDtoRequest.getText());
+        assertThat(result.getText()).isEqualTo(comment.getText());
         assertThat(commentCaptor.getValue()).isEqualTo(comment);
     }
 
     @Test
     void checkUpdateShouldThrowResourceNotFoundException() {
-        User user = getUser();
+        User user = getUserAdmin();
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
         doThrow(ResourceNotFoundException.class)
                 .when(commentRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> commentService.update(TEST_ID, getCommentDtoRequest(), TEST_TOKEN));
+        assertThatThrownBy(() -> commentService.update(TEST_ID, getComment(), TEST_TOKEN))
+                .isInstanceOf(ResourceNotFoundException.class);
+        verify(commentRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkUpdateShouldThrowPermissionExceptionForUserWithoutRole() {
+        Comment comment = getComment();
+        User user = getUserWithoutRole();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> commentService.update(TEST_ID, comment, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkUpdateShouldThrowPermissionExceptionForSubscriber() {
+        Comment comment = getComment();
+        User user = getUserSubscriber();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doReturn(Optional.of(comment))
+                .when(commentRepository).findById(TEST_ID);
+
+        assertThatThrownBy(() -> commentService.update(TEST_ID, comment, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
         verify(commentRepository).findById(anyLong());
         verify(userUtility).getUserByToken(anyString());
     }
 
     @Test
     void checkDeleteById() {
-        User user = getUser();
+        User user = getUserAdmin();
         Comment comment = getComment();
 
         doReturn(Optional.of(comment))
@@ -238,6 +250,49 @@ class CommentServiceImplTest {
         verify(commentRepository).findById(anyLong());
         verify(userUtility).getUserByToken(anyString());
         verify(commentRepository).deleteById(anyLong());
+    }
+
+    @Test
+    void checkDeleteShouldThrowResourceNotFoundException() {
+        User user = getUserAdmin();
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doThrow(ResourceNotFoundException.class)
+                .when(commentRepository).findById(anyLong());
+        assertThatThrownBy(() -> commentService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(ResourceNotFoundException.class);
+        verify(commentRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkDeleteShouldThrowPermissionExceptionForUserWithoutRole() {
+        User user = getUserWithoutRole();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> commentService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkDeleteShouldThrowPermissionExceptionForSubscriber() {
+        Comment comment = getComment();
+        User user = getUserSubscriber();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doReturn(Optional.of(comment))
+                .when(commentRepository).findById(TEST_ID);
+
+        assertThatThrownBy(() -> commentService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(commentRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
     }
 
 }

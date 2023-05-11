@@ -24,9 +24,9 @@ public class TestData {
 
     public static List<News> getNewsList() {
         List<News> news = new ArrayList<>();
-        news.add(News.builder().id(1L).title("Title1").text("Text1").build());
-        news.add(News.builder().id(2L).title("Title2").text("Text2").build());
-        news.add(News.builder().id(3L).title("Title3").text("Text3").build());
+        news.add(News.builder().id(1L).title("Title1").text("Text1").userName("User1").build());
+        news.add(News.builder().id(2L).title("Title2").text("Text2").userName("User2").build());
+        news.add(News.builder().id(3L).title("Title3").text("Text3").userName("User3").build());
         return news;
     }
 
@@ -65,12 +65,32 @@ public class TestData {
         return Proto.CommentDtoResponse.newBuilder().setId(1L).setText("Text1").setUserName("User1").build();
     }
 
-    public static User getUser() {
+    public static User getUserAdmin() {
         Set<Role> roles = new HashSet<>();
         roles.add(new Role(1L, RoleEnum.ADMIN));
         return User.builder().id(1L).username("User1").password("1234").firstName("Ivan").lastName("Ivanov")
                 .roles(roles).build();
     }
+
+    public static User getUserSubscriber() {
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role(1L, RoleEnum.SUBSCRIBER));
+        return User.builder().id(1L).username("User1").password("1234").firstName("Ivan").lastName("Ivanov")
+                .roles(roles).build();
+    }
+
+    public static User getUserJournalist() {
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role(1L, RoleEnum.JOURNALIST));
+        return User.builder().id(1L).username("User1").password("1234").firstName("Ivan").lastName("Ivanov")
+                .roles(roles).build();
+    }
+
+    public static User getUserWithoutRole() {
+        return User.builder().id(1L).username("User1").password("1234").firstName("Ivan").lastName("Ivanov")
+                .roles(new HashSet<>()).build();
+    }
+
 
     public static <E extends BaseEntity<Long>> Specification<E> getTestSpecification(String search) {
         EntitySpecificationsBuilder builder = new EntitySpecificationsBuilder();

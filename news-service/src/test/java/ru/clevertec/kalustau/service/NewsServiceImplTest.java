@@ -14,12 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.client.dto.User;
-import ru.clevertec.kalustau.dto.NewsDtoRequest;
-import ru.clevertec.kalustau.mapper.NewsMapper;
+import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.impl.NewsServiceImpl;
-import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.service.impl.UserUtility;
 
@@ -27,14 +25,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
 import static ru.clevertec.kalustau.util.Constants.TEST_PAGE_NO;
@@ -43,11 +40,11 @@ import static ru.clevertec.kalustau.util.Constants.TEST_SEARCH;
 import static ru.clevertec.kalustau.util.Constants.TEST_SORT_BY;
 import static ru.clevertec.kalustau.util.Constants.TEST_TOKEN;
 import static ru.clevertec.kalustau.util.TestData.getNews;
-import static ru.clevertec.kalustau.util.TestData.getNewsDtoRequest;
-import static ru.clevertec.kalustau.util.TestData.getNewsDtoResponse;
 import static ru.clevertec.kalustau.util.TestData.getNewsList;
 import static ru.clevertec.kalustau.util.TestData.getTestSpecification;
-import static ru.clevertec.kalustau.util.TestData.getUser;
+import static ru.clevertec.kalustau.util.TestData.getUserAdmin;
+import static ru.clevertec.kalustau.util.TestData.getUserJournalist;
+import static ru.clevertec.kalustau.util.TestData.getUserSubscriber;
 
 @ExtendWith(MockitoExtension.class)
 class NewsServiceImplTest {
@@ -59,9 +56,6 @@ class NewsServiceImplTest {
     private NewsRepository newsRepository;
 
     @Mock
-    private NewsMapper newsMapper;
-
-    @Mock
     private UserUtility userUtility;
 
     @Captor
@@ -70,38 +64,30 @@ class NewsServiceImplTest {
     @Test
     void checkFindAll() {
         News news = getNewsList().get(0);
-        Proto.NewsDtoResponse newsDto = getNewsDtoResponse();
         Specification<News> specification = getTestSpecification(TEST_SEARCH);
 
         doReturn(new PageImpl<>(getNewsList()))
                 .when(newsRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
-        doReturn(newsDto)
-                .when(newsMapper).newsToDto(news);
 
-        List<Proto.NewsDtoResponse> newsDtoList = newsService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        List<News> newsList = newsService.findAll(TEST_SEARCH, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
 
         verify(newsRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
-        verify(newsMapper, times(3)).newsToDto(any());
 
-        assertThat(newsDtoList.get(0)).isEqualTo(newsDto);
+        assertThat(newsList.get(0)).isEqualTo(news);
     }
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
     void checkFindById(Long id) {
         News news = getNews();
-        Proto.NewsDtoResponse newsDto = getNewsDtoResponse();
 
         doReturn(Optional.of(news))
                 .when(newsRepository).findById(id);
-        doReturn(newsDto)
-                .when(newsMapper).newsToDto(news);
 
-        Proto.NewsDtoResponse result = newsService.findById(id);
+        News result = newsService.findById(id);
 
         verify(newsRepository).findById(anyLong());
-        verify(newsMapper).newsToDto(any());
-        assertThat(result).isEqualTo(newsDto);
+        assertThat(result).isEqualTo(news);
     }
 
     @ParameterizedTest
@@ -109,81 +95,113 @@ class NewsServiceImplTest {
     void checkFindByIdShouldThrowResourceNotFoundException(Long id) {
         doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> newsService.findById(id));
+        assertThatThrownBy(() -> newsService.findById(id))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(newsRepository).findById(anyLong());
     }
 
     @Test
     void checkSave() {
         News news = getNews();
-        NewsDtoRequest newsDtoRequest = getNewsDtoRequest();
-        Proto.NewsDtoResponse newsDtoResponse = getNewsDtoResponse();
-        User user = getUser();
+        User user = getUserAdmin();
 
         doReturn(news)
                 .when(newsRepository).save(newsCaptor.capture());
-        doReturn(news)
-                .when(newsMapper).dtoToNews(newsDtoRequest);
-        doReturn(newsDtoResponse)
-                .when(newsMapper).newsToDto(news);
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.NewsDtoResponse result = newsService.save(newsDtoRequest, TEST_TOKEN);
+        News result = newsService.save(news, TEST_TOKEN);
         verify(newsRepository).save(news);
-        verify(newsMapper).dtoToNews(newsDtoRequest);
-        verify(newsMapper).newsToDto(news);
         verify(userUtility).getUserByToken(anyString());
-        assertThat(result.getTitle()).isEqualTo(newsDtoRequest.getTitle());
-        assertThat(result.getText()).isEqualTo(newsDtoRequest.getText());
+        assertThat(result.getTitle()).isEqualTo(news.getTitle());
+        assertThat(result.getText()).isEqualTo(news.getText());
         assertThat(newsCaptor.getValue()).isEqualTo(news);
+    }
+
+    @Test
+    void checkSaveShouldThrowPermissionExceptionForSubscriber() {
+        News news = getNews();
+        User user = getUserSubscriber();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> newsService.save(news, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(userUtility).getUserByToken(anyString());
     }
 
     @Test
     void checkUpdate() {
         News news = getNews();
-        NewsDtoRequest newsDtoRequest = getNewsDtoRequest();
-        Proto.NewsDtoResponse newsDtoResponse = getNewsDtoResponse();
-        User user = getUser();
+        User user = getUserAdmin();
 
         doReturn(Optional.of(news))
                 .when(newsRepository).findById(TEST_ID);
         doReturn(news)
                 .when(newsRepository).save(newsCaptor.capture());
-        doReturn(news)
-                .when(newsMapper).dtoToNews(newsDtoRequest);
-        doReturn(newsDtoResponse)
-                .when(newsMapper).newsToDto(news);
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
 
-        Proto.NewsDtoResponse result = newsService.update(TEST_ID, newsDtoRequest, TEST_TOKEN);
+        News result = newsService.update(TEST_ID, news, TEST_TOKEN);
 
         verify(newsRepository).findById(anyLong());
         verify(newsRepository).save(news);
-        verify(newsMapper).dtoToNews(newsDtoRequest);
-        verify(newsMapper).newsToDto(news);
         verify(userUtility).getUserByToken(anyString());
-        assertThat(result.getTitle()).isEqualTo(newsDtoRequest.getTitle());
-        assertThat(result.getText()).isEqualTo(newsDtoRequest.getText());
+        assertThat(result.getTitle()).isEqualTo(news.getTitle());
+        assertThat(result.getText()).isEqualTo(news.getText());
         assertThat(newsCaptor.getValue()).isEqualTo(news);
     }
 
     @Test
     void checkUpdateShouldThrowResourceNotFoundException() {
-        User user = getUser();
+        User user = getUserAdmin();
         doReturn(user)
                 .when(userUtility).getUserByToken(TEST_TOKEN);
         doThrow(ResourceNotFoundException.class)
                 .when(newsRepository).findById(anyLong());
-        assertThrows(ResourceNotFoundException.class, () -> newsService.update(TEST_ID, getNewsDtoRequest(), TEST_TOKEN));
+        assertThatThrownBy(() -> newsService.update(TEST_ID, getNews(), TEST_TOKEN))
+                .isInstanceOf(ResourceNotFoundException.class);
+        verify(newsRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkUpdateShouldThrowPermissionExceptionForSubscriber() {
+        News news = getNews();
+        User user = getUserSubscriber();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> newsService.update(TEST_ID, news, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkUpdateShouldThrowPermissionExceptionForJournalist() {
+        News news = getNews();
+        User user = getUserJournalist();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doReturn(Optional.of(news))
+                .when(newsRepository).findById(TEST_ID);
+
+        assertThatThrownBy(() -> newsService.update(TEST_ID, news, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
         verify(newsRepository).findById(anyLong());
         verify(userUtility).getUserByToken(anyString());
     }
 
     @Test
     void checkDeleteById() {
-        User user = getUser();
+        User user = getUserAdmin();
         News news = getNews();
 
         doReturn(Optional.of(news))
@@ -198,6 +216,49 @@ class NewsServiceImplTest {
         verify(newsRepository).findById(anyLong());
         verify(userUtility).getUserByToken(anyString());
         verify(newsRepository).deleteById(anyLong());
+    }
+
+    @Test
+    void checkDeleteShouldThrowResourceNotFoundException() {
+        User user = getUserAdmin();
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doThrow(ResourceNotFoundException.class)
+                .when(newsRepository).findById(anyLong());
+        assertThatThrownBy(() -> newsService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(ResourceNotFoundException.class);
+        verify(newsRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkDeleteShouldThrowPermissionExceptionForSubscriber() {
+        User user = getUserSubscriber();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+
+        assertThatThrownBy(() -> newsService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(userUtility).getUserByToken(anyString());
+    }
+
+    @Test
+    void checkDeleteShouldThrowPermissionExceptionForJournalist() {
+        News news = getNews();
+        User user = getUserJournalist();
+
+        doReturn(user)
+                .when(userUtility).getUserByToken(TEST_TOKEN);
+        doReturn(Optional.of(news))
+                .when(newsRepository).findById(TEST_ID);
+
+        assertThatThrownBy(() -> newsService.deleteById(TEST_ID, TEST_TOKEN))
+                .isInstanceOf(PermissionException.class)
+                .hasMessage("No permission to perform operation");
+        verify(newsRepository).findById(anyLong());
+        verify(userUtility).getUserByToken(anyString());
     }
 
 }
