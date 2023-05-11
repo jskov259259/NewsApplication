@@ -4,7 +4,8 @@ CREATE TABLE news
     id BIGSERIAL PRIMARY KEY,
     time TIME NOT NULL,
     title VARCHAR(255) NOT NULL UNIQUE,
-    text TEXT NOT NULL
+    text TEXT NOT NULL,
+    username VARCHAR(55)
 );
 
 DROP TABLE IF EXISTS comments;

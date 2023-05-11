@@ -7,7 +7,8 @@ import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.News;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Component
 public class NewsMapper {
@@ -20,16 +21,16 @@ public class NewsMapper {
     }
 
     public Proto.NewsDtoResponse newsToDto(News news) {
-//        Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();
+        Instant instant = news.getTime().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
         return Proto.NewsDtoResponse
                 .newBuilder()
                 .setId(news.getId())
                 .setTitle(news.getTitle())
                 .setText(news.getText())
-//                .setTime(Timestamp.newBuilder()
-//                        .setSeconds(instant.getEpochSecond())
-//                        .setNanos(instant.getNano())
-//                        .build())
+                .setTime(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
                 .build();
     }
 }
