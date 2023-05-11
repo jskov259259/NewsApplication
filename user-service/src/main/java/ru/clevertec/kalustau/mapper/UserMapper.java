@@ -1,12 +1,19 @@
 package ru.clevertec.kalustau.mapper;
 
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import ru.clevertec.kalustau.model.JwtRequest;
 import ru.clevertec.kalustau.model.User;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
+@Component
+public class UserMapper {
 
-    User requestToUser(JwtRequest jwtRequest);
+    public User requestToUser(JwtRequest jwtRequest) {
+       return User.builder().username(jwtRequest.getUsername())
+                .password(jwtRequest.getPassword())
+                .firstName(jwtRequest.getFirstName())
+                .lastName(jwtRequest.getLastName())
+                .roles(jwtRequest.getRoles())
+                .build();
+    }
 
 }

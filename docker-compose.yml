@@ -6,13 +6,15 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILE: redis
+      SPRING_PROFILE: custom-cache
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: clevertec
       SPRING_REDIS_HOST: cache
       SPRING_REDIS_PORT: 6379
       CLOUD_CONFIG_URI: http://config-server:8888
+      EUREKA_URI: http://eureka-server:8761
+      FEIGN_USER_CLIENT_URI: http://user-service:8081
     networks:
       - postgres-network
     restart: unless-stopped
