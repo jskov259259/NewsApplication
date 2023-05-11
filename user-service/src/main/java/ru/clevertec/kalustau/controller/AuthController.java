@@ -23,8 +23,20 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) {
-        final JwtResponse token = authService.login(authRequest);
+        JwtResponse token = authService.login(authRequest);
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("register")
+    public ResponseEntity<JwtResponse> register(@RequestBody JwtRequest authRequest) {
+        JwtResponse token = authService.register(authRequest);
+        return ResponseEntity.ok(token);
+    }
+
+    @GetMapping("byToken/{token}")
+    public ResponseEntity<User> getUserByToken(@PathVariable String token) {
+        User user = authService.getUserByToken(token);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("token")
@@ -37,12 +49,6 @@ public class AuthController {
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
         final JwtResponse token = authService.refresh(request.getRefreshToken());
         return ResponseEntity.ok(token);
-    }
-
-    @GetMapping("byToken/{token}")
-    public ResponseEntity<User> getUserByToken(@PathVariable String token) {
-        User user = authService.getUserByToken(token);
-        return ResponseEntity.ok(user);
     }
 
 }

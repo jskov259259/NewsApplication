@@ -4,10 +4,10 @@ import io.jsonwebtoken.Claims;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.kalustau.exceptions.AuthException;
-import ru.clevertec.kalustau.model.JwtAuthentication;
+import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
+import ru.clevertec.kalustau.mapper.UserMapper;
 import ru.clevertec.kalustau.model.JwtRequest;
 import ru.clevertec.kalustau.model.JwtResponse;
 import ru.clevertec.kalustau.model.User;
@@ -22,29 +22,40 @@ public class AuthService {
     private final UserService userService;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
+    private final UserMapper userMapper;
 
     public JwtResponse login(@NonNull JwtRequest authRequest) {
-        final User user = userService.findByUsername(authRequest.getUsername())
-                .orElseThrow(() -> new AuthException("Пользователь не найден"));
+        User user = userService.findByUsername(authRequest.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         if (user.getPassword().equals(authRequest.getPassword())) {
-            final String accessToken = jwtProvider.generateAccessToken(user);
-            final String refreshToken = jwtProvider.generateRefreshToken(user);
+            String accessToken = jwtProvider.generateAccessToken(user);
+            String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getUsername(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
-            throw new AuthException("Неправильный пароль");
+            throw new AuthException("Wrong password");
         }
+    }
+
+    public JwtResponse register(@NonNull JwtRequest authRequest) {
+        User user = userService.save(userMapper.requestToUser(authRequest));
+
+        String accessToken = jwtProvider.generateAccessToken(user);
+        String refreshToken = jwtProvider.generateRefreshToken(user);
+        refreshStorage.put(user.getUsername(), refreshToken);
+        return new JwtResponse(accessToken, refreshToken);
     }
 
     public JwtResponse getAccessToken(@NonNull String refreshToken) {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
-            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String login = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(login);
+            Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            String login = claims.getSubject();
+            String saveRefreshToken = refreshStorage.get(login);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.findByUsername(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                final String accessToken = jwtProvider.generateAccessToken(user);
+                User user = userService.findByUsername(login)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                String accessToken = jwtProvider.generateAccessToken(user);
                 return new JwtResponse(accessToken, null);
             }
         }
@@ -53,32 +64,27 @@ public class AuthService {
 
     public JwtResponse refresh(@NonNull String refreshToken) {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
-            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            final String login = claims.getSubject();
-            final String saveRefreshToken = refreshStorage.get(login);
+            Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            String login = claims.getSubject();
+            String saveRefreshToken = refreshStorage.get(login);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.findByUsername(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                final String accessToken = jwtProvider.generateAccessToken(user);
-                final String newRefreshToken = jwtProvider.generateRefreshToken(user);
+                User user = userService.findByUsername(login)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                String accessToken = jwtProvider.generateAccessToken(user);
+                String newRefreshToken = jwtProvider.generateRefreshToken(user);
                 refreshStorage.put(user.getUsername(), newRefreshToken);
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
-        throw new AuthException("Невалидный JWT токен");
-    }
-
-    public JwtAuthentication getAuthInfo() {
-        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        throw new AuthException("Invalid JWT token");
     }
 
     public User getUserByToken(String token) {
         Claims claims = jwtProvider.getAccessClaims(token);
         String login = claims.getSubject();
         User user = userService.findByUsername(login)
-                .orElseThrow(() -> new AuthException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return user;
     }
-
 
 }
