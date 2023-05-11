@@ -1,7 +1,6 @@
 package ru.clevertec.kalustau.service;
 
-import ru.clevertec.kalustau.dto.CommentDtoRequest;
-import ru.clevertec.kalustau.dto.Proto;
+import ru.clevertec.kalustau.model.Comment;
 
 import java.util.List;
 
@@ -14,14 +13,14 @@ public interface CommentService {
      * @param sortBy parameter for sorting the result
      * @return a list of comments.
      */
-    List<Proto.CommentDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
+    List<Comment> findAll(String search, Integer pageNo, Integer pageSize, String sortBy);
 
     /**
      * Return comment by id.
      * @param id parameter for the id of a certain comment
      * @return comment with given id
      */
-    Proto.CommentDtoResponse findById(Long id);
+    Comment findById(Long id);
 
     /**
      * Returns all comments by specifying news id.
@@ -31,22 +30,22 @@ public interface CommentService {
      * @param sortBy parameter for sorting the result
      * @return A JSON representation of the comments of the given news
      */
-    List<Proto.CommentDtoResponse> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy);
+    List<Comment> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy);
 
     /**
      * Create comment.
      * @param newsId parameter for the id of a certain news
-     * @param commentDtoRequest object to save a comment to a specific news
+     * @param comment object to save a comment to a specific news
      * @return created comment
      */
-    Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest, String token);
+    Comment save(Long newsId, Comment comment, String token);
 
     /**
      * Update news by specifying id.
-     * @param commentDtoRequest object to update
+     * @param comment object to update
      * @return updated news
      */
-    Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest, String token);
+    Comment update(Long id, Comment comment, String token);
 
     /**
      * Delete comment by specifying id.

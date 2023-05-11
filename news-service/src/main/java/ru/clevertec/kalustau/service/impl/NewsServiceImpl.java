@@ -2,7 +2,6 @@ package ru.clevertec.kalustau.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,7 +23,7 @@ import ru.clevertec.kalustau.service.NewsService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 import ru.clevertec.kalustau.dto.Proto;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -40,7 +39,6 @@ import static ru.clevertec.kalustau.service.impl.UserUtility.isUserJournalist;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-@CacheConfig(cacheNames = "newsCache")
 public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
@@ -51,27 +49,24 @@ public class NewsServiceImpl implements NewsService {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable(cacheNames = "newsList")
-    public List<Proto.NewsDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
+    public List<News> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Specification<News> specification = new EntitySpecificationsBuilder<News>().getSpecification(search);
 
         Page<News> pagedResult = newsRepository.findAll(specification, paging);
 
-        return pagedResult.getContent().stream()
-                .map(newsMapper::newsToDto)
-                .collect(Collectors.toList());
+        return pagedResult.getContent();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Cacheable(key = "#id")
-    public Proto.NewsDtoResponse findById(Long id) {
+    @Cacheable(value = "news", key = "#id")
+    public News findById(Long id) {
         News news = newsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + id));
-        return newsMapper.newsToDto(news);
+        return news;
     }
 
     /**
@@ -79,17 +74,16 @@ public class NewsServiceImpl implements NewsService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#newsDtoRequest")
-    public Proto.NewsDtoResponse save(NewsDtoRequest newsDtoRequest, String token) {
+    @CachePut(value = "news", key = "#result.id")
+    public News save(News news, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
             throw new PermissionException("No permission to perform operation");
         }
-        News news = newsMapper.dtoToNews(newsDtoRequest);
-        news.setTime(LocalDateTime.now());
+        news.setTime(LocalTime.now());
         news.setUserName(user.getUsername());
         News createdNews = newsRepository.save(news);
-        return newsMapper.newsToDto(createdNews);
+        return createdNews;
     }
 
 
@@ -98,8 +92,8 @@ public class NewsServiceImpl implements NewsService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#newsDtoRequest.id")
-    public Proto.NewsDtoResponse update(Long id, NewsDtoRequest newsDtoRequest, String token) {
+    @CachePut(value = "news", key = "#id")
+    public News update(Long id, News newNews, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
             throw new PermissionException("No permission to perform operation");
@@ -112,10 +106,9 @@ public class NewsServiceImpl implements NewsService {
             throw new PermissionException("No permission to perform operation");
         }
 
-        News newNews = newsMapper.dtoToNews(newsDtoRequest);
         updateNews(currentNews, newNews);
         News updatedNews = newsRepository.save(currentNews);
-        return newsMapper.newsToDto(updatedNews);
+        return updatedNews;
     }
 
     /**
@@ -123,7 +116,7 @@ public class NewsServiceImpl implements NewsService {
      */
     @Override
     @Transactional
-    @CacheEvict(key = "#id")
+    @CacheEvict(value = "news", key = "#id")
     public void deleteById(Long id, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserJournalist(user))) {

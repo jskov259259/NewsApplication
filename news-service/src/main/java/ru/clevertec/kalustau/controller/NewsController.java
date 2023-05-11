@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.annotation.ControllerLog;
 import ru.clevertec.kalustau.dto.NewsDtoRequest;
 import ru.clevertec.kalustau.dto.Proto;
+import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.NewsService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_NO;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_SIZE;
@@ -48,6 +50,7 @@ import static ru.clevertec.kalustau.util.JsonProtobufUtility.toJson;
 public class NewsController {
 
     private final NewsService newsService;
+    private final NewsMapper newsMapper;
 
     /**
      * API Point for returning news page.
@@ -66,8 +69,12 @@ public class NewsController {
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<Proto.NewsDtoResponse> news = newsService.findAll(search, pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
+
+        List<News> news = newsService.findAll(search, pageNo, pageSize, sortBy);
+        List<Proto.NewsDtoResponse> responseList = news.stream()
+                .map(newsMapper::newsToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(toJson(responseList), HttpStatus.OK);
     }
 
     /**
@@ -81,8 +88,10 @@ public class NewsController {
             @ApiResponse(description = "Such news not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findById(@PathVariable Long id) {
-        Proto.NewsDtoResponse news = newsService.findById(id);
-        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
+
+        News news = newsService.findById(id);
+        Proto.NewsDtoResponse response = newsMapper.newsToDto(news);
+        return new ResponseEntity<>(toJson(response), HttpStatus.OK);
     }
 
     /**
@@ -97,8 +106,10 @@ public class NewsController {
     public ResponseEntity<String> create(
             @RequestBody @Valid NewsDtoRequest newsDtoRequest,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Proto.NewsDtoResponse createdNewsDto = newsService.save(newsDtoRequest, token);
-        return new ResponseEntity<>(toJson(createdNewsDto), HttpStatus.CREATED);
+
+        News createdNews = newsService.save(newsMapper.dtoToNews(newsDtoRequest), token);
+        Proto.NewsDtoResponse response = newsMapper.newsToDto(createdNews);
+        return new ResponseEntity<>(toJson(response), HttpStatus.CREATED);
     }
 
     /**
@@ -116,8 +127,10 @@ public class NewsController {
             @PathVariable Long id,
             @RequestBody @Valid NewsDtoRequest newsDtoRequest,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Proto.NewsDtoResponse news = newsService.update(id, newsDtoRequest, token);
-        return new ResponseEntity<>(toJson(news), HttpStatus.OK);
+
+        News updatedNews = newsService.update(id, newsMapper.dtoToNews(newsDtoRequest), token);
+        Proto.NewsDtoResponse response = newsMapper.newsToDto(updatedNews);
+        return new ResponseEntity<>(toJson(response), HttpStatus.OK);
     }
 
     /**
@@ -131,6 +144,7 @@ public class NewsController {
     public ResponseEntity<?> delete(
             @PathVariable Long id,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+
         newsService.deleteById(id, token);
         return new ResponseEntity(HttpStatus.OK);
     }

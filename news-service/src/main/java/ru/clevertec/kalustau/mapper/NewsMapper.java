@@ -20,16 +20,16 @@ public class NewsMapper {
     }
 
     public Proto.NewsDtoResponse newsToDto(News news) {
-        Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();
+//        Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();
         return Proto.NewsDtoResponse
                 .newBuilder()
                 .setId(news.getId())
                 .setTitle(news.getTitle())
                 .setText(news.getText())
-                .setTime(Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build())
+//                .setTime(Timestamp.newBuilder()
+//                        .setSeconds(instant.getEpochSecond())
+//                        .setNanos(instant.getNano())
+//                        .build())
                 .build();
     }
 }

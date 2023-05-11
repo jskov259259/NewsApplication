@@ -24,10 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.kalustau.annotation.ControllerLog;
 import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.dto.Proto;
+import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
+import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.CommentService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.clevertec.kalustau.controller.config.Constants.COMMENTS_URL;
 import static ru.clevertec.kalustau.controller.config.Constants.DEFAULT_PAGE_NO;
@@ -47,6 +50,7 @@ import static ru.clevertec.kalustau.util.JsonProtobufUtility.toJson;
 public class CommentController {
 
     private final CommentService commentsService;
+    private final CommentMapper commentMapper;
 
     /**
      * API Point for returning all comments.
@@ -65,8 +69,12 @@ public class CommentController {
             @RequestParam(defaultValue = DEFAULT_PAGE_NO) Integer pageNo,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
-        List<Proto.CommentDtoResponse> comments = commentsService.findAll(search, pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
+
+        List<Comment> comments = commentsService.findAll(search, pageNo, pageSize, sortBy);
+        List<Proto.CommentDtoResponse> responseList = comments.stream()
+                .map(commentMapper::commentToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(toJson(responseList), HttpStatus.OK);
     }
 
     /**
@@ -80,8 +88,10 @@ public class CommentController {
             @ApiResponse(description = "Such comment not found", responseCode = "404", content = { @Content(schema = @Schema()) })})
     @GetMapping(value=COMMENTS_URL + "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findById(@PathVariable Long id) {
-        Proto.CommentDtoResponse comment = commentsService.findById(id);
-        return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
+
+        Comment comment = commentsService.findById(id);
+        Proto.CommentDtoResponse response = commentMapper.commentToDto(comment);
+        return new ResponseEntity<>(toJson(response), HttpStatus.OK);
     }
 
     /**
@@ -103,8 +113,11 @@ public class CommentController {
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = DEFAULT_SORT_BY) String sortBy) {
 
-        List<Proto.CommentDtoResponse> comments = commentsService.findAllByNewsId(newsId, pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(toJson(comments), HttpStatus.OK);
+        List<Comment> comments = commentsService.findAllByNewsId(newsId, pageNo, pageSize, sortBy);
+        List<Proto.CommentDtoResponse> responseList = comments.stream()
+                .map(commentMapper::commentToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(toJson(responseList), HttpStatus.OK);
     }
 
     /**
@@ -122,8 +135,10 @@ public class CommentController {
             @PathVariable(value = "newsId") Long newsId,
             @RequestBody @Valid CommentDtoRequest commentDtoRequest,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Proto.CommentDtoResponse createdComment = commentsService.save(newsId, commentDtoRequest, token);
-        return new ResponseEntity<>(toJson(createdComment), HttpStatus.CREATED);
+
+        Comment createdComment = commentsService.save(newsId, commentMapper.dtoToComment(commentDtoRequest), token);
+        Proto.CommentDtoResponse response = commentMapper.commentToDto(createdComment);
+        return new ResponseEntity<>(toJson(response), HttpStatus.CREATED);
     }
 
     /**
@@ -142,8 +157,10 @@ public class CommentController {
             @PathVariable Long id,
             @RequestBody @Valid CommentDtoRequest commentDtoRequest,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Proto.CommentDtoResponse comment = commentsService.update(id, commentDtoRequest, token);
-        return new ResponseEntity<>(toJson(comment), HttpStatus.OK);
+
+        Comment updatedComment = commentsService.update(id, commentMapper.dtoToComment(commentDtoRequest), token);
+        Proto.CommentDtoResponse response = commentMapper.commentToDto(updatedComment);
+        return new ResponseEntity<>(toJson(response), HttpStatus.OK);
     }
 
     /**

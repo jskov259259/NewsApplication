@@ -26,6 +26,7 @@ import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 import ru.clevertec.kalustau.dto.Proto;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -54,43 +55,38 @@ public class CommentServiceImpl implements CommentService {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable
-    public List<Proto.CommentDtoResponse> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
+    public List<Comment> findAll(String search, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Specification<Comment> specification = new EntitySpecificationsBuilder<Comment>().getSpecification(search);
 
         Page<Comment> pagedResult = commentRepository.findAll(specification, paging);
 
-        return pagedResult.getContent().stream()
-                .map(commentMapper::commentToDto)
-                .collect(Collectors.toList());
+        return pagedResult.getContent();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Cacheable(key = "#id")
-    public Proto.CommentDtoResponse findById(Long id) {
+    @Cacheable(value = "comment", key = "#id")
+    public Comment findById(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No such comment with id=" + id));
-        return commentMapper.commentToDto(comment);
+        return comment;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Proto.CommentDtoResponse> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
+    public List<Comment> findAllByNewsId(Long newsId, Integer pageNo, Integer pageSize, String sortBy) {
         if (!newsRepository.existsById(newsId)) {
             throw new ResourceNotFoundException("Not found News with id = " + newsId);
         }
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<Comment> pagedResult = commentRepository.findAllByNewsId(newsId, paging);
 
-        return pagedResult.getContent().stream()
-                .map(commentMapper::commentToDto)
-                .collect(Collectors.toList());
+        return pagedResult.getContent();
     }
 
     /**
@@ -98,21 +94,21 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#commentDtoRequest")
-    public Proto.CommentDtoResponse save(Long newsId, CommentDtoRequest commentDtoRequest, String token) {
+    @CachePut(value = "comment", key = "#result.id")
+    public Comment save(Long newsId, Comment comment, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserSubscriber(user) || isUserJournalist(user))) {
             throw new PermissionException("No permission to perform operation");
         }
-        Comment comment = commentMapper.dtoToComment(commentDtoRequest);
+
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
-        comment.setTime(LocalDateTime.now());
+        comment.setTime(LocalTime.now());
         comment.setUserName(user.getUsername());
 
         Comment createdComment = commentRepository.save(comment);
-        return commentMapper.commentToDto(createdComment);
+        return createdComment;
     }
 
     /**
@@ -120,8 +116,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    @CachePut(key = "#commentDtoRequest.id")
-    public Proto.CommentDtoResponse update(Long id, CommentDtoRequest commentDtoRequest, String token) {
+    @CachePut(value = "comment", key = "#id")
+    public Comment update(Long id, Comment newComment, String token) {
         User user = userUtility.getUserByToken(token);
         if (!(isUserAdmin(user) || isUserSubscriber(user) || isUserJournalist(user))) {
             throw new PermissionException("No permission to perform operation");
@@ -133,10 +129,9 @@ public class CommentServiceImpl implements CommentService {
             throw new PermissionException("No permission to perform operation");
         }
 
-        Comment newComment = commentMapper.dtoToComment(commentDtoRequest);
         updateComment(currentComment, newComment);
         Comment updatedComment = commentRepository.save(currentComment);
-        return commentMapper.commentToDto(updatedComment);
+        return updatedComment;
     }
 
     /**

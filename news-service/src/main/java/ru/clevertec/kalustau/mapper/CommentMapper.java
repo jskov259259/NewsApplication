@@ -19,14 +19,14 @@ public class CommentMapper {
     }
 
     public Proto.CommentDtoResponse commentToDto(Comment comment) {
-        Instant instant = comment.getTime().atZone(ZoneId.systemDefault()).toInstant();
+//        Instant instant = comment.getTime().atZone(ZoneId.systemDefault()).toInstant();
         return Proto.CommentDtoResponse
                 .newBuilder()
                 .setId(comment.getId())
-                .setTime(Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build())
+//                .setTime(Timestamp.newBuilder()
+//                        .setSeconds(instant.getEpochSecond())
+//                        .setNanos(instant.getNano())
+//                        .build())
                 .setText(comment.getText())
                 .setUserName(comment.getUserName())
                 .build();
