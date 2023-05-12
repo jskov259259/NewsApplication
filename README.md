@@ -75,16 +75,16 @@ A service that implements a news management system.
 **Available endpoints**:  
 *GET /api/v1/news* - Find all news  
 *GET /api/v1/news/{id}* - Find news by id  
-*POST /api/v1/news* - create news  
-*PUT /api/v1/news{id}* - update  
-*DELETE /api/v1/news/{id}* - delete  
+*POST /api/v1/news* - Create news  
+*PUT /api/v1/news/{id}* - Update news
+*DELETE /api/v1/news/{id}* - Delete news by id 
 
 *GET /api/v1/comments* - Find all comments  
 *GET /api/v1/comments/{id}* - Find comment by id  
 *GET /api/v1/news/{newsId}/comments* - Find all comments by specifying news id  
 *POST /api/v1/news/{newsId}/comments* - Create comment for a specific news  
-*PUT /api/v1/comments/{id}* - update comment by id  
-*DELETE /api/v1/comments/{id}* - delete comment by id  
+*PUT /api/v1/comments/{id}* - Update comment by id  
+*DELETE /api/v1/comments/{id}* - Delete comment by id  
 
 **Possible profiles**:  
 *custom-cache*: Run application with custom LRU or LFU implementations  
