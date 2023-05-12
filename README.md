@@ -101,3 +101,6 @@ GET api/auth/user/{token} - get user by token
 POST api/auth/token - refresh user token  
 POST api/auth/refresh - refresh user refresh token  
 
+#### Swagger OpenAPI documentation:
+http://localhost:8080/swagger-ui.html
+
