@@ -43,6 +43,34 @@ class NewsServiceImplIT extends BaseIntegrationTest {
     }
 
     @Test
+    void checkFindAllWithSpecifyingUserName() {
+        String search = "userName:Ignavia";
+        List<News> resultList = newsService.findAll(search, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        assertThat(resultList.size()).isEqualTo(2);
+    }
+
+    @Test
+    void checkFindAllWithSpecifyingIdGreaterThan() {
+        String search = "id>5";
+        List<News> resultList = newsService.findAll(search, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        assertThat(resultList.size()).isEqualTo(5);
+    }
+
+    @Test
+    void checkFindAllWithSpecifyingIdLessThan() {
+        String search = "id<5";
+        List<News> resultList = newsService.findAll(search, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        assertThat(resultList.size()).isEqualTo(4);
+    }
+
+    @Test
+    void checkFindAllWithSpecifyingLogicalNo() {
+        String search = "userName!Ignavia";
+        List<News> resultList = newsService.findAll(search, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+        assertThat(resultList.size()).isEqualTo(8);
+    }
+
+    @Test
     void checkFindById() {
         News news = newsService.findById(TEST_ID);
         assertThat(news.getId()).isEqualTo(TEST_ID);
