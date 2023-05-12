@@ -1,0 +1,12 @@
+{
+  "id": "3",
+  "username": "Subscriber1",
+  "firstName": "Mihail",
+  "lastName": "Mihailov",
+  "roles": [
+    {
+      "id": "3",
+      "role": "SUBSCRIBER"
+    }
+  ]
+}

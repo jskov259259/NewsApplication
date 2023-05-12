@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.aop.cache;
+package ru.clevertec.kalustau.cache.aop;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.clevertec.kalustau.cache.Cache;
-import ru.clevertec.kalustau.model.News;
+import ru.clevertec.kalustau.model.Comment;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -20,9 +20,9 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Profile("custom-cache")
-public class NewsCacheAspect {
+public class CommentCacheAspect {
 
-    private final Cache<News> cache;
+    private final Cache<Comment> cache;
 
     /**
      * Advice at the method level (find by id) intercepting control for interacting with the cache
@@ -30,16 +30,16 @@ public class NewsCacheAspect {
      * @return The cached value or the result of the method execution.
      * @throws Throwable If an exception occurs during method execution.
      */
-    @Around("execution(* ru.clevertec.kalustau.repository.NewsRepository.findById(..))")
+    @Around("execution(* ru.clevertec.kalustau.repository.CommentRepository.findById(..))")
     public Object findByIdAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Long id = (Long) joinPoint.getArgs()[0];
-        Optional<News> newsFromCacheData = cache.getById(id);
-        if (newsFromCacheData.isEmpty()) {
-            Optional<News> newsFromRepositoryData = (Optional<News>) joinPoint.proceed();
-            newsFromRepositoryData.ifPresent(cache::save);
-            return newsFromRepositoryData;
+        Optional<Comment> commentFromCacheData = cache.getById(id);
+        if (commentFromCacheData.isEmpty()) {
+            Optional<Comment> commentFromRepositoryData = (Optional<Comment>) joinPoint.proceed();
+            commentFromRepositoryData.ifPresent(cache::save);
+            return commentFromRepositoryData;
         }
-        return newsFromCacheData;
+        return commentFromCacheData;
     }
 
     /**
@@ -48,18 +48,18 @@ public class NewsCacheAspect {
      * @return The cached value or the result of the method execution.
      * @throws Throwable If an exception occurs during method execution.
      */
-    @Around("execution(* ru.clevertec.kalustau.repository.NewsRepository.save(..))")
+    @Around("execution(* ru.clevertec.kalustau.repository.CommentRepository.save(..))")
     public Object saveOrUpdateAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-        News news = (News) joinPoint.getArgs()[0];
-        if (Objects.nonNull(news.getId())) {
-            News updatedNews = (News) joinPoint.proceed();
-            cache.update(news);
-            return updatedNews;
+        Comment comment = (Comment) joinPoint.getArgs()[0];
+        if (Objects.nonNull(comment.getId())) {
+            Comment updatedComment = (Comment) joinPoint.proceed();
+            cache.update(comment);
+            return updatedComment;
         }
         else {
-            News createdNews = (News) joinPoint.proceed();
-            cache.save(createdNews);
-            return createdNews;
+            Comment createdComment = (Comment) joinPoint.proceed();
+            cache.save(createdComment);
+            return createdComment;
         }
     }
 
@@ -69,7 +69,7 @@ public class NewsCacheAspect {
      * @return The cached value or the result of the method execution.
      * @throws Throwable If an exception occurs during method execution.
      */
-    @Around("execution(* ru.clevertec.kalustau.repository.NewsRepository.deleteById(..))")
+    @Around("execution(* ru.clevertec.kalustau.repository.CommentRepository.deleteById(..))")
     public void deleteAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Long id = (Long) joinPoint.getArgs()[0];
         joinPoint.proceed();

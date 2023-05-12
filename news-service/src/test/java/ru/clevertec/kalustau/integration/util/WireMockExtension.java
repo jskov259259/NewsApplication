@@ -1,4 +1,4 @@
-package ru.clevertec.kalustau.client.util;
+package ru.clevertec.kalustau.integration.util;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;

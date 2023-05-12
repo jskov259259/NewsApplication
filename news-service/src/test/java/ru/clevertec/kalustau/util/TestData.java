@@ -1,6 +1,7 @@
 package ru.clevertec.kalustau.util;
 
 import com.google.common.base.Joiner;
+import com.google.protobuf.Timestamp;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.client.dto.Role;
 import ru.clevertec.kalustau.client.dto.RoleEnum;
@@ -13,6 +14,11 @@ import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.dto.Proto;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,9 +30,9 @@ public class TestData {
 
     public static List<News> getNewsList() {
         List<News> news = new ArrayList<>();
-        news.add(News.builder().id(1L).title("Title1").text("Text1").userName("User1").build());
-        news.add(News.builder().id(2L).title("Title2").text("Text2").userName("User2").build());
-        news.add(News.builder().id(3L).title("Title3").text("Text3").userName("User3").build());
+        news.add(News.builder().id(1L).title("Title1").text("Text1").time(LocalTime.now()).userName("User1").build());
+        news.add(News.builder().id(2L).title("Title2").text("Text2").time(LocalTime.now()).userName("User2").build());
+        news.add(News.builder().id(3L).title("Title3").text("Text3").time(LocalTime.now()).userName("User3").build());
         return news;
     }
 
@@ -39,16 +45,26 @@ public class TestData {
     }
 
     public static Proto.NewsDtoResponse getNewsDtoResponse() {
-        return Proto.NewsDtoResponse.newBuilder().setId(1L).setTitle("Title1").setText("Text1").build();
+        Instant instant = LocalTime.now().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        return Proto.NewsDtoResponse
+                .newBuilder()
+                .setId(1L)
+                .setTitle("Title1")
+                .setText("Text1")
+                .setTime(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .build();
     }
 
     public static List<Comment> getCommentList() {
         List<Comment> comments = new ArrayList<>();
-        comments.add(Comment.builder().id(1L).text("Text1")
+        comments.add(Comment.builder().id(1L).text("Text1").time(LocalTime.now())
                 .userName("User1").build());
-        comments.add(Comment.builder().id(2L).text("Text2")
+        comments.add(Comment.builder().id(2L).text("Text2").time(LocalTime.now())
                 .userName("User2").build());
-        comments.add(Comment.builder().id(3L).text("Text3")
+        comments.add(Comment.builder().id(3L).text("Text3").time(LocalTime.now())
                 .userName("User3").build());
         return comments;
     }
@@ -62,7 +78,17 @@ public class TestData {
     }
 
     public static Proto.CommentDtoResponse getCommentDtoResponse() {
-        return Proto.CommentDtoResponse.newBuilder().setId(1L).setText("Text1").setUserName("User1").build();
+        Instant instant = LocalTime.now().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        return Proto.CommentDtoResponse
+                .newBuilder()
+                .setId(1L)
+                .setText("Text1")
+                .setUserName("User1")
+                .setTime(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .build();
     }
 
     public static User getUserAdmin() {

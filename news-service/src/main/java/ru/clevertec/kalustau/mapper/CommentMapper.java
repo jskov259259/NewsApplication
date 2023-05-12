@@ -7,7 +7,8 @@ import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.dto.Proto;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Component
 public class CommentMapper {
@@ -19,14 +20,14 @@ public class CommentMapper {
     }
 
     public Proto.CommentDtoResponse commentToDto(Comment comment) {
-//        Instant instant = comment.getTime().atZone(ZoneId.systemDefault()).toInstant();
+        Instant instant = comment.getTime().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
         return Proto.CommentDtoResponse
                 .newBuilder()
                 .setId(comment.getId())
-//                .setTime(Timestamp.newBuilder()
-//                        .setSeconds(instant.getEpochSecond())
-//                        .setNanos(instant.getNano())
-//                        .build())
+                .setTime(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
                 .setText(comment.getText())
                 .setUserName(comment.getUserName())
                 .build();

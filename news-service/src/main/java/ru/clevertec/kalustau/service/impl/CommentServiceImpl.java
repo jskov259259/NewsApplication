@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.client.dto.User;
-import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
 import ru.clevertec.kalustau.mapper.CommentMapper;
@@ -23,13 +22,10 @@ import ru.clevertec.kalustau.repository.CommentRepository;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
-import ru.clevertec.kalustau.dto.Proto;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static ru.clevertec.kalustau.service.impl.UserUtility.isUserAdmin;
 import static ru.clevertec.kalustau.service.impl.UserUtility.isUserHasRightsToModification;
