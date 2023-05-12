@@ -30,9 +30,9 @@ public class TestData {
 
     public static List<News> getNewsList() {
         List<News> news = new ArrayList<>();
-        news.add(News.builder().id(1L).title("Title1").text("Text1").time(LocalTime.now()).userName("User1").build());
-        news.add(News.builder().id(2L).title("Title2").text("Text2").time(LocalTime.now()).userName("User2").build());
-        news.add(News.builder().id(3L).title("Title3").text("Text3").time(LocalTime.now()).userName("User3").build());
+        news.add(News.builder().id(1L).title("Title1").text("Text1").time(LocalDateTime.now()).userName("User1").build());
+        news.add(News.builder().id(2L).title("Title2").text("Text2").time(LocalDateTime.now()).userName("User2").build());
+        news.add(News.builder().id(3L).title("Title3").text("Text3").time(LocalDateTime.now()).userName("User3").build());
         return news;
     }
 
@@ -60,11 +60,11 @@ public class TestData {
 
     public static List<Comment> getCommentList() {
         List<Comment> comments = new ArrayList<>();
-        comments.add(Comment.builder().id(1L).text("Text1").time(LocalTime.now())
+        comments.add(Comment.builder().id(1L).text("Text1").time(LocalDateTime.now())
                 .userName("User1").build());
-        comments.add(Comment.builder().id(2L).text("Text2").time(LocalTime.now())
+        comments.add(Comment.builder().id(2L).text("Text2").time(LocalDateTime.now())
                 .userName("User2").build());
-        comments.add(Comment.builder().id(3L).text("Text3").time(LocalTime.now())
+        comments.add(Comment.builder().id(3L).text("Text3").time(LocalDateTime.now())
                 .userName("User3").build());
         return comments;
     }

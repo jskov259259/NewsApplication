@@ -2,8 +2,6 @@ package ru.clevertec.kalustau.service;
 
 import java.util.List;
 
-import ru.clevertec.kalustau.dto.NewsDtoRequest;
-import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.News;
 
 /**

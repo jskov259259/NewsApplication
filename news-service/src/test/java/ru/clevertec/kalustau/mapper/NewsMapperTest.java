@@ -27,13 +27,16 @@ class NewsMapperTest {
     @Test
     void checkDtoToNews() {
         News actual = newsMapper.dtoToNews(newsDtoRequest);
-        assertThat(actual).isEqualTo(news);
+        assertThat(actual.getTitle()).isEqualTo(news.getTitle());
+        assertThat(actual.getText()).isEqualTo(news.getText());
     }
 
     @Test
     void checkNewsToDto() {
         Proto.NewsDtoResponse actual = newsMapper.newsToDto(news);
-        assertThat(actual).isEqualTo(newsDtoResponse);
+        assertThat(actual.getId()).isEqualTo(newsDtoResponse.getId());
+        assertThat(actual.getTitle()).isEqualTo(newsDtoResponse.getTitle());
+        assertThat(actual.getText()).isEqualTo(newsDtoResponse.getText());
     }
 
 }

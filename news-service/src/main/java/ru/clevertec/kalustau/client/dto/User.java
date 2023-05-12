@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+/**
+ * DTO entity representing the user in the database
+ * @author Dzmitry Kalustau
+ */
 @Data
 @Builder
 @NoArgsConstructor

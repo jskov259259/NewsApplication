@@ -7,9 +7,12 @@ import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.dto.Proto;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 
+/**
+ * Mapper for converting comments and dto
+ * @author Dzmitry Kalustau
+ */
 @Component
 public class CommentMapper {
 
@@ -20,7 +23,7 @@ public class CommentMapper {
     }
 
     public Proto.CommentDtoResponse commentToDto(Comment comment) {
-        Instant instant = comment.getTime().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        Instant instant = comment.getTime().atZone(ZoneId.systemDefault()).toInstant();;
         return Proto.CommentDtoResponse
                 .newBuilder()
                 .setId(comment.getId())

@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO entity representing the news in request
+ * @author Dzmitry Kalustau
+ */
 @Data
 @Builder
 @NoArgsConstructor

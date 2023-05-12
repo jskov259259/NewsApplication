@@ -7,9 +7,12 @@ import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.model.News;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 
+/**
+ * Mapper for converting news and dto
+ * @author Dzmitry Kalustau
+ */
 @Component
 public class NewsMapper {
 
@@ -21,7 +24,7 @@ public class NewsMapper {
     }
 
     public Proto.NewsDtoResponse newsToDto(News news) {
-        Instant instant = news.getTime().atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        Instant instant = news.getTime().atZone(ZoneId.systemDefault()).toInstant();;
         return Proto.NewsDtoResponse
                 .newBuilder()
                 .setId(news.getId())

@@ -3,7 +3,12 @@ package ru.clevertec.kalustau.integration.service;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.clevertec.kalustau.integration.BaseIntegrationTest;
 import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
@@ -19,6 +24,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static ru.clevertec.kalustau.integration.util.WireMockUtil.buildUserAdminResponse;
 import static ru.clevertec.kalustau.integration.util.WireMockUtil.buildUserSubscriberResponse;
 import static ru.clevertec.kalustau.util.Constants.TEST_ID;
@@ -52,6 +61,23 @@ class CommentServiceImplIT extends BaseIntegrationTest {
     @Test
     void checkFindByIdShouldThrowResourceNotFoundException() {
         assertThatThrownBy(() -> commentService.findById(50L))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void checkFindAllByNewsId() {
+
+        List<Comment> commentList = commentService.findAllByNewsId(TEST_ID,
+                TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY);
+
+        assertThat(commentList.get(0).getId()).isEqualTo(1);
+        assertThat(commentList.get(0).getText()).isEqualTo("Nice news");
+        assertThat(commentList.get(0).getUserName()).isEqualTo("Cellular");
+    }
+
+    @Test
+    void checkFindAllByNewsIdShouldThrowResourceNotFoundException() {
+        assertThatThrownBy(() -> commentService.findAllByNewsId(50L, TEST_PAGE_NO, TEST_PAGE_SIZE, TEST_SORT_BY))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

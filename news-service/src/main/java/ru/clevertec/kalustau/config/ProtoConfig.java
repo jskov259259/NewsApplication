@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
+/**
+ * Configuration class for protobuf beans
+ * @author Dzmitry Kalustau
+ */
 @Configuration
 public class ProtoConfig {
 

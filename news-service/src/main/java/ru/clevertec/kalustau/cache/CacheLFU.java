@@ -118,6 +118,9 @@ public abstract class CacheLFU<E extends BaseEntity<Long>> implements Cache<E> {
         frequencyMap.clear();
     }
 
+    /**
+     * Returns the number of elements in this cache
+     */
     public int size() {
         return valueMap.size();
     }

@@ -10,6 +10,10 @@ import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.kalustau.dto.criteria.SearchCriteria;
 import ru.clevertec.kalustau.model.BaseEntity;
 
+/**
+ * Class representing specification implementation for all entities
+ * @author Dzmitry Kalustau
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 public class EntitySpecification<E extends BaseEntity<Long>> implements Specification<E> {

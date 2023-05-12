@@ -1,5 +1,9 @@
 package ru.clevertec.kalustau.controller.config;
 
+/**
+ * Class providing constants for controllers
+ * @author Dzmitry Kalustau
+ */
 public class Constants {
 
     public static final String NEWS_URL = "/api/v1/news";

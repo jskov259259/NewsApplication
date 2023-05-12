@@ -2,6 +2,10 @@ package ru.clevertec.kalustau.client.dto;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Enum representing various roles
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 public enum RoleEnum {
 

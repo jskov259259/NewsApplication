@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.clevertec.kalustau.client.controller.UserFeignClient;
 import ru.clevertec.kalustau.client.dto.User;
 
+/**
+ * Utility class providing methods for working with the user
+ * @author Dzmitry Kalustau
+ */
 @Service
 @RequiredArgsConstructor
 public class UserUtility {

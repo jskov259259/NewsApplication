@@ -77,7 +77,9 @@ class CommentServiceImplTest {
 
         verify(commentRepository).findAll(specification, PageRequest.of(TEST_PAGE_NO, TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
 
-        assertThat(commentList.get(0)).isEqualTo(comment);
+        assertThat(commentList.get(0).getId()).isEqualTo(comment.getId());
+        assertThat(commentList.get(0).getText()).isEqualTo(comment.getText());
+        assertThat(commentList.get(0).getUserName()).isEqualTo(comment.getUserName());
     }
 
     @ParameterizedTest
@@ -121,6 +123,9 @@ class CommentServiceImplTest {
                 TEST_PAGE_SIZE, Sort.by(TEST_SORT_BY)));
 
         assertThat(commentList.get(0)).isEqualTo(comment);
+        assertThat(commentList.get(0).getId()).isEqualTo(comment.getId());
+        assertThat(commentList.get(0).getText()).isEqualTo(comment.getText());
+        assertThat(commentList.get(0).getUserName()).isEqualTo(comment.getUserName());
     }
 
     @ParameterizedTest

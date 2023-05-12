@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
-import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.CommentRepository;
@@ -23,7 +22,7 @@ import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.CommentService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +43,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
-    private final CommentMapper commentMapper;
     private final UserUtility userUtility;
 
     /**
@@ -100,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such news with id=" + newsId));
         comment.setNews(news);
-        comment.setTime(LocalTime.now());
+        comment.setTime(LocalDateTime.now());
         comment.setUserName(user.getUsername());
 
         Comment createdComment = commentRepository.save(comment);

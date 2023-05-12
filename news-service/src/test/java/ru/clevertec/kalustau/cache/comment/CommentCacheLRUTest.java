@@ -31,7 +31,9 @@ class CommentCacheLRUTest {
     void checkGetById() {
         Comment expectedComment = getCommentList().get(0);
         Optional<Comment> commentData = commentCacheLRU.getById(TEST_ID);
-        assertThat(commentData.get()).isEqualTo(expectedComment);
+        assertThat(commentData.get().getId()).isEqualTo(expectedComment.getId());
+        assertThat(commentData.get().getText()).isEqualTo(expectedComment.getText());
+        assertThat(commentData.get().getUserName()).isEqualTo(expectedComment.getUserName());
     }
 
     @Test

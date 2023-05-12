@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * An entity representing a user's role
+ * @author Dzmitry Kalustau
+ */
 @Data
 @Builder
 @NoArgsConstructor

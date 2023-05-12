@@ -97,7 +97,7 @@ Possible roles: admin, journalist, subscriber.
 **Available endpoints**:  
 POST api/auth/login - user authorization and authentication  
 POST api/auth/register - Register a new user  
-GET api/auth/byToken/{token} - get user by token  
+GET api/auth/user/{token} - get user by token  
 POST api/auth/token - refresh user token  
 POST api/auth/refresh - refresh user refresh token  
 

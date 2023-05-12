@@ -7,9 +7,12 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+/**
+ * Utility class for protobuf serialization
+ * @author Dzmitry Kalustau
+ */
 @UtilityClass
 public class JsonProtobufUtility {
-
 
     public static String toJson(MessageOrBuilder messageOrBuilder) {
         String json = "";

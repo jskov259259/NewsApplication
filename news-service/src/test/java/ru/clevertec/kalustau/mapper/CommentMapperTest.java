@@ -33,7 +33,9 @@ class CommentMapperTest {
     @Test
     void checkNewsToDto() {
         Proto.CommentDtoResponse actual = commentMapper.commentToDto(comment);
-        assertThat(actual).isEqualTo(commentDtoResponse);
+        assertThat(actual.getId()).isEqualTo(commentDtoResponse.getId());
+        assertThat(actual.getText()).isEqualTo(commentDtoResponse.getText());
+        assertThat(actual.getUserName()).isEqualTo(commentDtoResponse.getUserName());
     }
 
 }

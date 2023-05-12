@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class representing simple constraints for an entity specification
+ * @author Dzmitry Kalustau
+ */
 @Getter
 @Setter
 @AllArgsConstructor

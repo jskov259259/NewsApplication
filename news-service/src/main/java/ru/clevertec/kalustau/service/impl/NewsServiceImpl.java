@@ -15,13 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.kalustau.client.dto.User;
 import ru.clevertec.kalustau.exceptions.PermissionException;
 import ru.clevertec.kalustau.exceptions.ResourceNotFoundException;
-import ru.clevertec.kalustau.mapper.NewsMapper;
 import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.repository.NewsRepository;
 import ru.clevertec.kalustau.service.NewsService;
 import ru.clevertec.kalustau.util.EntitySpecificationsBuilder;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +38,6 @@ import static ru.clevertec.kalustau.service.impl.UserUtility.isUserJournalist;
 public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
-    private final NewsMapper newsMapper;
     private final UserUtility userUtility;
 
     /**
@@ -77,7 +75,7 @@ public class NewsServiceImpl implements NewsService {
         if (!(isUserAdmin(user) || isUserJournalist(user))) {
             throw new PermissionException("No permission to perform operation");
         }
-        news.setTime(LocalTime.now());
+        news.setTime(LocalDateTime.now());
         news.setUserName(user.getUsername());
         News createdNews = newsRepository.save(news);
         return createdNews;

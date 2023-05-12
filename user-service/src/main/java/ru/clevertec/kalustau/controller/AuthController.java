@@ -33,7 +33,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("byToken/{token}")
+    @GetMapping("user/{token}")
     public ResponseEntity<User> getUserByToken(@PathVariable String token) {
         User user = authService.getUserByToken(token);
         return ResponseEntity.ok(user);

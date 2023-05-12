@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${SPRING_PROFILE:redis}
+    active: ${SPRING_PROFILE:custom-cache}
   application:
     name: news-service
   cloud:

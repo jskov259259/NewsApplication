@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class representing builder specification implementation
+ * @author Dzmitry Kalustau
+ */
 public class EntitySpecificationsBuilder<E> {
 
     private List<SearchCriteria> params = new ArrayList<>();
