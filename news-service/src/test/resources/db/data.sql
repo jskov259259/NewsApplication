@@ -9,6 +9,8 @@ INSERT INTO news VALUES (8, '18:24:12', 'Sexual assaults in the US military incr
 INSERT INTO news VALUES (9, '21:18:02', 'US Army renames Fort Lee after 2 pioneering Black Army officers', 'CNN  — The US Army renamed Virginia’s Fort Lee military base Thursday in honor of two Black service members, following a branch-wide push to rename bases named after Confederate leaders. The base will be “redesignated” as Fort Gregg-Adams after Lt. Gen. Arthur Gregg and Lt. Col. Charity Adams, the Army announced on Twitter. It had been named after Gen. Robert E. Lee, who led Confederate forces in the American Civil War. “Both Soldiers excelled in the field of sustainment and made significant contributions to USArmy history, the Army said in a tweet. We’re proud to honor the courage, sacrifice, and diversity of these distinguished Soldiers and also our civilians.', 'Sycosis');
 INSERT INTO news VALUES (10, '17:31:16', 'Ukraine war. Russia launches second pre-dawn missile attack in three days', 'Russia has launched a series of missiles at Ukrainian cities in the second pre-dawn attack in three days. Pavlohrad, a logistics hub near the central city of Dnipro, was hit ahead of a much-anticipated counter-offensive by Ukraine. The strike sparked a major fire, destroyed dozens of houses, and wounded 34 people. Hours later, the air raid alert sounded across the country, with the capital Kyiv among the targets. Across the country, the Ukrainian army said it shot down 15 of the 18 cruise missiles that had been fired.', 'Sycosis');
 
+SELECT SETVAL('news_id_seq', (SELECT MAX(id) FROM news));
+
 INSERT INTO comments VALUES (1, '11:19:06', 'Nice news', 'Cellular', 1);
 INSERT INTO comments VALUES (2, '02:36:17', 'Don’t even compare our situations with each other, my problems are a lot more complicated and awful.', 'Polli', 2);
 INSERT INTO comments VALUES (3, '02:30:16', 'I hate it when people use emoji’s instead of answers, emoji’s make any conversation unserious.', 'Norman', 3);
@@ -29,3 +31,5 @@ INSERT INTO comments VALUES (17, '08:10:00', 'Doing my maximum, it will take som
 INSERT INTO comments VALUES (18, '12:10:58', 'What is wrong with people? They seem to be very aggressive and they can’t tolerate different point of view.', 'Jentacular', 9);
 INSERT INTO comments VALUES (19, '20:34:13', 'How about we wait for him first, listen to his advice and make decision afterwards? Sounds good?', 'MenexVerily', 1);
 INSERT INTO comments VALUES (20, '19:16:22', 'I just can''t stop playing puzzle games, no matter how many times I try it never gets boring.', 'Boleromorph511', 9);
+
+SELECT SETVAL('comments_id_seq', (SELECT MAX(id) FROM comments));

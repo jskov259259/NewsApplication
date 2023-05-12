@@ -11,13 +11,17 @@ databaseChangeLog:
             INSERT INTO users(id, username, password, first_name, last_name) VALUES (5, 'Jentacular', '1234', 'Jentacular', 'Adelheid');
             INSERT INTO users(id, username, password, first_name, last_name) VALUES (6, 'LimanYawp', '1234', 'Liman', 'Yawp');
 
+            SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));
+
             INSERT INTO roles(id, role) VALUES (1, 'ADMIN');
             INSERT INTO roles(id, role) VALUES (2, 'JOURNALIST');
             INSERT INTO roles(id, role) VALUES (3, 'SUBSCRIBER');
 
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (1, 1);
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (2, 2);
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (3, 2);
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (4, 2);
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (5, 3);
-            INSERT INTO public.users_roles(user_id, role_id) VALUES (6, 3);
+            SELECT SETVAL('roles_id_seq', (SELECT MAX(id) FROM roles));
+
+            INSERT INTO users_roles(user_id, role_id) VALUES (1, 1);
+            INSERT INTO users_roles(user_id, role_id) VALUES (2, 2);
+            INSERT INTO users_roles(user_id, role_id) VALUES (3, 2);
+            INSERT INTO users_roles(user_id, role_id) VALUES (4, 2);
+            INSERT INTO users_roles(user_id, role_id) VALUES (5, 3);
+            INSERT INTO users_roles(user_id, role_id) VALUES (6, 3);

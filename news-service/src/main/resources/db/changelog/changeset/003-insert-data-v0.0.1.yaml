@@ -25,6 +25,8 @@ databaseChangeLog:
             INSERT INTO news VALUES (19, '13:04:02', 'Climate change. Spain breaks record temperature for April', 'The record figure was reached in Cordoba airport in southern Spain just after 15:00 local time (14:00 BST). For days a blistering heatwave has hit the country with temperatures 10-15C warmer than expected for April. Its been driven by a mass of very hot air from Africa, coupled with a slow moving weather system. "This is not normal. Temperatures are completely out of control this year," Cayetano Torres, a spokesman for Spain''s meteorological office, told BBC News.', 'Sycosis');
             INSERT INTO news VALUES (20, '19:10:58', 'BP faces green protest over new climate goals', 'Some of the UK''s biggest pension funds have voted against reappointing BP''s chairman over a decision to weaken its climate plans, but the majority of shareholders backed Helge Lund. It comes after the energy giant cut back its target to reduce emissions by the end of the decade. As well as the dissenting votes there were also disruptions during the annual meeting from climate protestors.', 'Polli');
 
+            SELECT SETVAL('news_id_seq', (SELECT MAX(id) FROM news));
+
             INSERT INTO comments VALUES (1, '11:19:06', 'One way or another your article is going to be awesome, I am pretty sure about it, but here is a question how much time it will take you?', 'Cellular', 1);
             INSERT INTO comments VALUES (2, '02:36:17', 'Don’t even compare our situations with each other, my problems are a lot more complicated and awful.', 'Polli', 1);
             INSERT INTO comments VALUES (3, '02:30:16', 'I hate it when people use emoji’s instead of answers, emoji’s make any conversation unserious.', 'Norman', 1);INSERT INTO comments VALUES (4, '18:12:00', 'Zebra, why zebra has such a weird set of colors???', 'Curlicue', 1);
@@ -225,4 +227,4 @@ databaseChangeLog:
             INSERT INTO comments VALUES (199, '05:39:26', 'Saw the other day vogue dance, it is weird, but I really loved moves in it.', 'Curlicue', 20);
             INSERT INTO comments VALUES (200, '12:10:58', 'Been there, tried that, no point, it won’t work no matter what, I’m tired....', 'Jentacular', 20);
 
-
+            SELECT SETVAL('comments_id_seq', (SELECT MAX(id) FROM comments));

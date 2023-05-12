@@ -26,7 +26,6 @@ import ru.clevertec.kalustau.dto.CommentDtoRequest;
 import ru.clevertec.kalustau.dto.Proto;
 import ru.clevertec.kalustau.mapper.CommentMapper;
 import ru.clevertec.kalustau.model.Comment;
-import ru.clevertec.kalustau.model.News;
 import ru.clevertec.kalustau.service.CommentService;
 
 import java.util.List;
