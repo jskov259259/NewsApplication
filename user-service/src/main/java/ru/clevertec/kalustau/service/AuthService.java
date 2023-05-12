@@ -15,6 +15,10 @@ import ru.clevertec.kalustau.model.User;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Service for checking the password and getting new access and refresh tokens to replace the rotten ones.
+ * @author Dzmitry Kalustau
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {

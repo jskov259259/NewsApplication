@@ -3,9 +3,12 @@ package ru.clevertec.kalustau.model;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.util.Set;
 
+/**
+ * DTO entity representing the user in request
+ * @author Dzmitry Kalustau
+ */
 @Setter
 @Getter
 public class JwtRequest {

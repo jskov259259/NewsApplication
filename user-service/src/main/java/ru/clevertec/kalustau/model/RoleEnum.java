@@ -3,6 +3,10 @@ package ru.clevertec.kalustau.model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
+/**
+ * Enum representing various roles
+ * @author Dzmitry Kalustau
+ */
 @RequiredArgsConstructor
 public enum RoleEnum implements GrantedAuthority {
 

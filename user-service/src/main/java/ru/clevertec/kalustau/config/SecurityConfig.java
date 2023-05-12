@@ -11,6 +11,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.clevertec.kalustau.filter.JwtFilter;
 
+/**
+ * Configuration class for security config
+ * Configures endpoints protection
+ * @author Dzmitry Kalustau
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/api/auth/login", "/api/auth/token", "/api/auth/register",
-                                        "/api/auth/byToken/**").permitAll()
+                                        "/api/auth/user/**").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)

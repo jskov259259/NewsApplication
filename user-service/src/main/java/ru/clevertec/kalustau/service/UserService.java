@@ -7,6 +7,10 @@ import ru.clevertec.kalustau.repository.UserRepository;
 
 import java.util.Optional;
 
+/**
+ * Service implementation for managing users.
+ * @author Dzmitry Kalustau
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {

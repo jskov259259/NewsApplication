@@ -4,6 +4,10 @@ import org.springframework.stereotype.Component;
 import ru.clevertec.kalustau.model.JwtRequest;
 import ru.clevertec.kalustau.model.User;
 
+/**
+ * Mapper for converting users and dto
+ * @author Dzmitry Kalustau
+ */
 @Component
 public class UserMapper {
 

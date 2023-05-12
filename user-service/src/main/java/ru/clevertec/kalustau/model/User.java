@@ -19,6 +19,10 @@ import lombok.ToString;
 
 import java.util.Set;
 
+/**
+ * Entity representing the user in the database
+ * @author Dzmitry Kalustau
+ */
 @Entity
 @Table(name = "users")
 @Builder

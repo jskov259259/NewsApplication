@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Class generating JwtAuthentication
+ * @author Dzmitry Kalustau
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JwtUtils {
 

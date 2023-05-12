@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * An entity representing a user's role
+ * @author Dzmitry Kalustau
+ */
 @Entity
 @Table(name = "roles")
 @Builder

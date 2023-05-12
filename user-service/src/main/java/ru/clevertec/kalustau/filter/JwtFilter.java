@@ -19,6 +19,10 @@ import ru.clevertec.kalustau.service.JwtUtils;
 
 import java.io.IOException;
 
+/**
+ * User authentication class
+ * @author Dzmitry Kalustau
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -26,6 +30,9 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
 
+    /**
+     * Checks the request header and generates an authentication object in the SecurityContext
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) throws IOException, ServletException {
         String token = getTokenFromRequest((HttpServletRequest) request);

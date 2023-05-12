@@ -8,6 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * User authentication class in SecurityContext
+ * @author Dzmitry Kalustau
+ */
 @Getter
 @Setter
 public class JwtAuthentication implements Authentication {

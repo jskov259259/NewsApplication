@@ -85,7 +85,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkSave() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -100,7 +100,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkSaveShouldThrowPermissionExceptionForSubscriber() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -115,7 +115,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkUpdate() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -131,7 +131,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkUpdateShouldThrowResourceNotFoundException() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -143,7 +143,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkUpdateShouldThrowPermissionExceptionForSubscriber() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -158,7 +158,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkUpdateShouldThrowPermissionExceptionForJournalist() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -173,7 +173,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkDeleteById() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -189,7 +189,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkDeleteShouldThrowResourceNotFoundException() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -201,7 +201,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkDeleteShouldThrowPermissionExceptionForSubscriber() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -214,7 +214,7 @@ class NewsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     void checkDeleteShouldThrowPermissionExceptionForJournalist() throws IOException {
-        stubFor(WireMock.get(urlPathMatching("/api/auth/byToken/" + TEST_TOKEN))
+        stubFor(WireMock.get(urlPathMatching("/api/auth/user/" + TEST_TOKEN))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
